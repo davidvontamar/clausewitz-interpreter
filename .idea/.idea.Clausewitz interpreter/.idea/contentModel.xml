@@ -6,6 +6,12 @@
       <e p="Clausewitz interpreter" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
         <e p="Clausewitz interpreter.csproj" t="IncludeRecursive" />
+        <e p="Constructs" t="Include">
+          <e p="Binding.cs" t="Include" />
+          <e p="Construct.cs" t="Include" />
+          <e p="Scope.cs" t="Include" />
+          <e p="Token.cs" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.0" t="Include">
