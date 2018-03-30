@@ -1,55 +1,45 @@
-﻿#region Include
-using System.Collections.Generic;
-#endregion
-
+﻿using System.Collections.Generic;
 namespace Clausewitz.Constructs
 {
 	/// <summary>Basic Clausewitz language construct.</summary>
 	public abstract class Construct
 	{
-		#region Constructors
 		/// <summary>Construct type & parent must be defined when created.</summary>
 		/// <param name="type">Construct type.</param>
-		/// <param name="scope">Parent scope.</param>
-		protected Construct(Types type, Scope scope)
+		/// <param name="parent">Parent scope.</param>
+		protected Construct(Types type, Scope parent)
 		{
 			Type = type;
-			Scope = scope;
+			Parent = parent;
 		}
-		#endregion
 
-		#region Properties
-		/// <summary>Depth level from Root construct.</summary>
+		/// <summary>Scope depth level within file.</summary>
 		public int Level
 		{
 			get
 			{
 				// This recursive function retrieves the count of all parents up to the root.
 				var parentScopes = 0;
-				var currentScope = Scope;
+				var currentScope = Parent;
 				while (true)
 				{
 					if (currentScope == null)
 						return parentScopes;
 					parentScopes++;
-					currentScope = Scope.Scope;
+					currentScope = Parent.Parent;
 				}
 			}
 		}
-		#endregion
 
-		#region Fields
 		/// <summary>Associated comments.</summary>
 		public List<string> Comments;
 
 		/// <summary>The parent scope.</summary>
-		public Scope Scope = null;
+		public Scope Parent;
 
 		/// <summary>Construct type.</summary>
 		public readonly Types Type;
-		#endregion
 
-		#region Nested types
 		/// <summary>All language constructs found in Clausewitz's syntax.</summary>
 		public enum Types
 		{
@@ -57,6 +47,5 @@ namespace Clausewitz.Constructs
 			Token,
 			Binding
 		}
-		#endregion
 	}
 }

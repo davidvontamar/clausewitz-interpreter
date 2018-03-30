@@ -12,6 +12,13 @@
           <e p="Scope.cs" t="Include" />
           <e p="Token.cs" t="Include" />
         </e>
+        <e p="Interpreter.cs" t="Include" />
+        <e p="IO" t="Include">
+          <e p="Directory.cs" t="Include" />
+          <e p="Extensions.cs" t="Include" />
+          <e p="File.cs" t="Include" />
+          <e p="IExplorable.cs" t="Include" />
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.0" t="Include">
