@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 namespace Clausewitz.IO
 {
 	/// <summary>
@@ -25,6 +27,20 @@ namespace Clausewitz.IO
 					address = currentExplorable.Name;
 				currentExplorable = explorable.Parent;
 			}
+		}
+
+		/// <summary>Checks if the given address is a fully qualified path or a relative path.</summary>
+		/// <param name="address">Address.</param>
+		/// <returns>Boolean.</returns>
+		internal static bool IsFullAddress(this string address)
+		{
+			if (string.IsNullOrWhiteSpace(address))
+				return false;
+			if (address.IndexOfAny(Path.GetInvalidPathChars().ToArray()) != -1)
+				return false;
+			if (!Path.IsPathRooted(address))
+				return false;
+			return Path.GetPathRoot(address) != Path.DirectorySeparatorChar.ToString();
 		}
 	}
 }

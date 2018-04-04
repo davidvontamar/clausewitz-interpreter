@@ -16,7 +16,6 @@ namespace Clausewitz.Constructs
 		/// <param name="name">Optional name.</param>
 		internal Scope(Scope parent, string name = null) : base(Types.Scope, parent)
 		{
-			Items = new List<Construct>();
 			if (name != null)
 				Name = name;
 		}
@@ -54,6 +53,6 @@ namespace Clausewitz.Constructs
 		public List<string> EndComments;
 
 		/// <summary>Child members.</summary>
-		public readonly List<Construct> Items;
+		public readonly List<Construct> Items = new List<Construct>();
 	}
 }
