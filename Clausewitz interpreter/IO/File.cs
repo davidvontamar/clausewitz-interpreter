@@ -7,13 +7,20 @@ namespace Clausewitz.IO
 	{
 		/// <summary>Primary constructor.</summary>
 		/// <param name="parent">Parent directory.</param>
-		/// <param name="name">File name without extension.</param>
-		/// <param name="extension">File extension.</param>
-		internal File(Directory parent, string name, Extensions extension) : base(name)
+		/// <param name="name">File name with extension.</param>
+		internal File(Directory parent, string name) : base(name)
 		{
 			Name = name;
 			Parent = parent;
-			Extension = extension;
+		}
+
+		/// <summary>
+		/// Retrieves all text within this file.
+		/// </summary>
+		/// <returns>File contents.</returns>
+		public string ReadText()
+		{
+			return System.IO.File.ReadAllText(Address);
 		}
 
 		/// <inheritdoc />
@@ -29,21 +36,6 @@ namespace Clausewitz.IO
 		public new Directory Parent
 		{
 			get;
-		}
-
-		/// <summary>
-		/// File extension.
-		/// </summary>
-		public Extensions Extension
-		{
-			get;
-		}
-
-		/// <summary>Relevant file extensions.</summary>
-		public enum Extensions
-		{
-			Txt,
-			Csv
 		}
 	}
 }

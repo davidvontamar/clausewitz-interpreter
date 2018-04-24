@@ -10,7 +10,7 @@
 		/// <param name="parent">Parent scope.</param>
 		/// <param name="name">Left side.</param>
 		/// <param name="value">Right side.</param>
-		internal Binding(Scope parent, string name, string value) : base(Types.Binding, parent)
+		internal Binding(Scope parent, string name, string value) : base(parent)
 		{
 			Name = name;
 			Value = value;

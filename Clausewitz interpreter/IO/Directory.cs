@@ -39,19 +39,24 @@ namespace Clausewitz.IO
 			get;
 		}
 
-		/// <summary>Creates a new directory within this directory.</summary>
-		/// <param name="name"></param>
-		public void NewDirectory(string name)
+		/// <summary>Creates a new directory within this directory. (Automatically assigns the parent)</summary>
+		/// <param name="name">Directory name.</param>
+		/// <returns>New directory.</returns>
+		public Directory NewDirectory(string name)
 		{
-			Directories.Add(new Directory(this, name));
+			var directory = new Directory(this, name);
+			Directories.Add(directory);
+			return directory;
 		}
 
-		/// <summary>Creates a new file within this directory.</summary>
-		/// <param name="name">File name without extension</param>
-		/// <param name="extension">File extension.</param>
-		public void NewFile(string name, File.Extensions extension)
+		/// <summary>Creates a new file within this directory. (Automatically assigns the parent)</summary>
+		/// <param name="name">File name with extension</param>
+		/// <returns>New file.</returns>
+		public File NewFile(string name)
 		{
-			Files.Add(new File(this, name, extension));
+			var file = new File(this, name);
+			Files.Add(file);
+			return file;
 		}
 
 		/// <summary>Sub-directories</summary>

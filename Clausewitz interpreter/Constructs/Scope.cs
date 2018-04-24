@@ -14,7 +14,7 @@ namespace Clausewitz.Constructs
 		/// <summary>Primary constructor.</summary>
 		/// <param name="parent">Parent scope.</param>
 		/// <param name="name">Optional name.</param>
-		internal Scope(Scope parent, string name = null) : base(Types.Scope, parent)
+		private Scope(Scope parent, string name = null) : base(parent)
 		{
 			if (name != null)
 				Name = name;
@@ -27,32 +27,41 @@ namespace Clausewitz.Constructs
 			set;
 		}
 
-		/// <summary>Creates a new binding within this scope.</summary>
+		/// <summary>Creates a new binding within this scope. (Automatically assigns the parent)</summary>
 		/// <param name="name">Left side.</param>
 		/// <param name="value">Right side.</param>
-		public void NewBinding(string name, string value)
+		/// <returns>New binding.</returns>
+		public Binding NewBinding(string name, string value)
 		{
-			Items.Add(new Binding(this, name, value));
+			var binding = new Binding(this, name, value);
+			Members.Add(binding);
+			return binding;
 		}
 
-		/// <summary>Creates a new scope within this scope.</summary>
+		/// <summary>Creates a new scope within this scope. (Automatically assigns the parent)</summary>
 		/// <param name="name">Optional name.</param>
-		public void NewScope(string name = null)
+		/// <returns>New scope.</returns>
+		public Scope NewScope(string name = null)
 		{
-			Items.Add(new Scope(this, name));
+			var scope = new Scope(this, name);
+			Members.Add(scope);
+			return scope;
 		}
 
-		/// <summary>Creates a new token within this scope.</summary>
+		/// <summary>Creates a new token within this scope. (Automatically assigns the parent)</summary>
 		/// <param name="value">Token symbol/string/value.</param>
-		public void NewToken(string value)
+		/// <returns>New token.</returns>
+		public Token NewToken(string value)
 		{
-			Items.Add(new Token(this, value));
+			var token = new Token(this, value);
+			Members.Add(token);
+			return token;
 		}
 
 		/// <summary>Comments located at the end of the scope.</summary>
 		public List<string> EndComments;
 
 		/// <summary>Child members.</summary>
-		public readonly List<Construct> Items = new List<Construct>();
+		public readonly List<Construct> Members = new List<Construct>();
 	}
 }

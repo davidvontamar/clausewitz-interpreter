@@ -1,19 +1,50 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 namespace Clausewitz.Constructs
 {
 	/// <summary>Basic Clausewitz language construct.</summary>
 	public abstract class Construct
 	{
 		/// <summary>Construct type & parent must be defined when created.</summary>
-		/// <param name="type">Construct type.</param>
 		/// <param name="parent">Parent scope.</param>
-		protected Construct(Types type, Scope parent)
+		protected Construct(Scope parent)
 		{
-			Type = type;
 			Parent = parent;
 		}
+		
+		/// <summary>
+		/// Extracts pragmas from associated comments within brackets, which are separated by commas, and their keywords which are separated by spaces.
+		/// </summary>
+		public List<List<string>> Pragmas
+		{
+			get
+			{
+				var allComments = new List<string>();
+				var @return = new List<List<string>>();
+				if (Comments != null)
+					allComments.AddRange(Comments);
+				if(this is Scope scope)
+					if (scope.EndComments != null)
+						allComments.AddRange(scope.EndComments);
+				if (allComments.Count == 0)
+					return @return;
+				foreach (var comment in allComments)
+				{
+					if (!(comment.Contains('[') && comment.Contains(']')))
+						continue;
+					var pragmas = comment.Split('[', ']')[1].Split(',');
+					foreach (var pragma in pragmas)
+					{
+						var keywords = new List<string>();
+						keywords.AddRange(pragma.Split(' '));
+						@return.Add(keywords);
+					}
+				}
+				return @return;
+			}
+		}
 
-		/// <summary>Scope depth level within file.</summary>
+		/// <summary>Scope's depth level within the containing file.</summary>
 		public int Level
 		{
 			get
@@ -32,20 +63,9 @@ namespace Clausewitz.Constructs
 		}
 
 		/// <summary>Associated comments.</summary>
-		public List<string> Comments;
+		public List<string> Comments = new List<string>();
 
 		/// <summary>The parent scope.</summary>
 		public Scope Parent;
-
-		/// <summary>Construct type.</summary>
-		public readonly Types Type;
-
-		/// <summary>All language constructs found in Clausewitz's syntax.</summary>
-		public enum Types
-		{
-			Scope,
-			Token,
-			Binding
-		}
 	}
 }

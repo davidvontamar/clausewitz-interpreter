@@ -6,7 +6,7 @@
 		/// <summary>Primary constructor.</summary>
 		/// <param name="parent">Parent scope.</param>
 		/// <param name="value">The token itself.</param>
-		internal Token(Scope parent, string value) : base(Types.Token, parent)
+		internal Token(Scope parent, string value) : base(parent)
 		{
 			Value = value;
 		}

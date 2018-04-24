@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\user\.Rider2017.3\system\resharper-host\local\Transient\ReSharperHost\v11\SolutionCaches\_Clausewitz interpreter.213407473.00" t="ExcludeRecursive" />
+    <e p="C:\Users\user\.Rider2018.1\system\resharper-host\local\Transient\ReSharperHost\v12\SolutionCaches\_Clausewitz interpreter.213407473.00" t="ExcludeRecursive" />
     <e p="C:\Users\user\Documents\Development\Rider\Clausewitz interpreter" t="IncludeFlat">
       <e p="Clausewitz CLI" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
@@ -21,6 +21,7 @@
         <e p="Constructs" t="Include">
           <e p="Binding.cs" t="Include" />
           <e p="Construct.cs" t="Include" />
+          <e p="Pragma.cs" t="Include" />
           <e p="Scope.cs" t="Include" />
           <e p="Token.cs" t="Include" />
         </e>
