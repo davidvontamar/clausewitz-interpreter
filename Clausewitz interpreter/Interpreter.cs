@@ -16,7 +16,7 @@ namespace Clausewitz
 		/// <summary>
 		/// Regex rule for valid Clausewitz values. Includes: identifiers, numerical values, and ':' variable binding operator.
 		/// </summary>
-		internal const string ValueRegexRule = @"[a-zA-Z0-9_:""]+";
+		internal const string ValueRegexRule = @"[a-zA-Z0-9_.:""]+";
 
 		/// <summary>
 		/// Checks if a token is a valid value in Clausewitz syntax standards for both names & values.

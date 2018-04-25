@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 namespace Clausewitz.Constructs
 {
 	/// <summary>Basic Clausewitz language construct.</summary>
@@ -10,38 +11,6 @@ namespace Clausewitz.Constructs
 		protected Construct(Scope parent)
 		{
 			Parent = parent;
-		}
-		
-		/// <summary>
-		/// Extracts pragmas from associated comments within brackets, which are separated by commas, and their keywords which are separated by spaces.
-		/// </summary>
-		public List<List<string>> Pragmas
-		{
-			get
-			{
-				var allComments = new List<string>();
-				var @return = new List<List<string>>();
-				if (Comments != null)
-					allComments.AddRange(Comments);
-				if(this is Scope scope)
-					if (scope.EndComments != null)
-						allComments.AddRange(scope.EndComments);
-				if (allComments.Count == 0)
-					return @return;
-				foreach (var comment in allComments)
-				{
-					if (!(comment.Contains('[') && comment.Contains(']')))
-						continue;
-					var pragmas = comment.Split('[', ']')[1].Split(',');
-					foreach (var pragma in pragmas)
-					{
-						var keywords = new List<string>();
-						keywords.AddRange(pragma.Split(' '));
-						@return.Add(keywords);
-					}
-				}
-				return @return;
-			}
 		}
 
 		/// <summary>Scope's depth level within the containing file.</summary>
@@ -62,10 +31,44 @@ namespace Clausewitz.Constructs
 			}
 		}
 
+		/// <summary>
+		///     Extracts pragmas from associated comments within brackets, which are separated by commas, and their keywords
+		///     which are separated by spaces.
+		/// </summary>
+		public HashSet<Pragma> Pragmas
+		{
+			get
+			{
+				var allComments = new List<string>();
+				var @return = new HashSet<Pragma>();
+				if (Comments != null)
+					allComments.AddRange(Comments);
+				if (this is Scope scope)
+					if (scope.EndComments != null)
+						allComments.AddRange(scope.EndComments);
+				if (allComments.Count == 0)
+					return @return;
+				foreach (var comment in allComments)
+				{
+					if (!(comment.Contains('[') && comment.Contains(']')))
+						continue;
+					// All pragmas are guaranteed to be lower case and trimmed.
+					var pragmas = Regex.Replace(comment.Split('[', ']')[1], @"\s+", " ").ToLower().Split(',');
+					foreach (var pragma in pragmas)
+						@return.Add(new Pragma(pragma.Split(' ')));
+				}
+				return @return;
+			}
+		}
+
 		/// <summary>Associated comments.</summary>
-		public List<string> Comments = new List<string>();
+		public readonly List<string> Comments = new List<string>();
 
 		/// <summary>The parent scope.</summary>
-		public Scope Parent;
+		public Scope Parent
+		{
+			get;
+			internal set;
+		}
 	}
 }

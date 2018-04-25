@@ -21,6 +21,7 @@
         <e p="Constructs" t="Include">
           <e p="Binding.cs" t="Include" />
           <e p="Construct.cs" t="Include" />
+          <e p="Extensions.cs" t="Include" />
           <e p="Pragma.cs" t="Include" />
           <e p="Scope.cs" t="Include" />
           <e p="Token.cs" t="Include" />

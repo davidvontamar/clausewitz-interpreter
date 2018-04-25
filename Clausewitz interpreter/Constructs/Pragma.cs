@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 namespace Clausewitz.Constructs
 {
 	/// <summary>
@@ -26,7 +28,7 @@ namespace Clausewitz.Constructs
 		/// <returns>Boolean.</returns>
 		public bool Contains(IEnumerable<string> keywords)
 		{
-			return Keywords.IsSupersetOf(keywords);
+			return Keywords.IsSupersetOf(keywords.FormatKeywords());
 		}
 
 		/// <summary>Checks if a pragma has all of the specified keywords.</summary>
@@ -34,7 +36,7 @@ namespace Clausewitz.Constructs
 		/// <returns>Boolean.</returns>
 		public bool Contains(params string[] keywords)
 		{
-			return Keywords.IsSupersetOf(keywords);
+			return Keywords.IsSupersetOf(keywords.FormatKeywords());
 		}
 
 		/// <summary>Keywords are separated by spaces within each pragma, and their order does not matter.</summary>
