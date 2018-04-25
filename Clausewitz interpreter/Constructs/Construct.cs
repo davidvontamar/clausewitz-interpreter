@@ -35,7 +35,7 @@ namespace Clausewitz.Constructs
 		///     Extracts pragmas from associated comments within brackets, which are separated by commas, and their keywords
 		///     which are separated by spaces.
 		/// </summary>
-		public HashSet<Pragma> Pragmas
+		public IEnumerable<Pragma> Pragmas
 		{
 			get
 			{

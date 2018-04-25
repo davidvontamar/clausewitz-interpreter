@@ -20,6 +20,54 @@ namespace Clausewitz.Constructs
 				Name = name;
 		}
 
+		/// <summary>If false, all members within this scope will come in a single line.</summary>
+		public bool Indented
+		{
+			get
+			{
+				if (Pragmas.Contains("indent"))
+					return true;
+				if (Pragmas.Contains("unindent"))
+					return false;
+				if (IndentedParent(Parent))
+					return true;
+				if (UnindentedParent(Parent))
+					return false;
+				if (AllTokens() && (Members.Count > 20))
+					return false;
+				return true;
+				bool IndentedParent(Scope parent)
+				{
+					while (true)
+					{
+						if (parent == null)
+							return false;
+						if (parent.Pragmas.Contains("indent", "all"))
+							return true;
+						parent = parent.Parent;
+					}
+				}
+				bool UnindentedParent(Scope parent)
+				{
+					while (true)
+					{
+						if (parent == null)
+							return false;
+						if (parent.Pragmas.Contains("unindent", "all"))
+							return true;
+						parent = parent.Parent;
+					}
+				}
+				bool AllTokens()
+				{
+					foreach (var member in Members)
+						if (!(member is Token))
+							return false;
+					return true;
+				}
+			}
+		}
+
 		/// <summary>Optional scope name (not all scopes have names in Clausewitz)</summary>
 		public string Name
 		{
@@ -27,6 +75,59 @@ namespace Clausewitz.Constructs
 			set;
 		}
 
+		/// <summary>If true, all members within this scope will be sorted alphabetically.</summary>
+		public bool Sorted
+		{
+			get
+			{
+				return SortedParent(Parent) || Pragmas.Contains("sort");
+				bool SortedParent(Scope parent)
+				{
+					while (true)
+					{
+						if (parent == null)
+							return false;
+						if (parent.Pragmas.Contains("sort", "all"))
+							return true;
+						parent = parent.Parent;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sorts members alphabetically.
+		/// </summary>
+		public void Sort()
+		{
+			Members.Sort((first, second) =>
+			{
+				var constructs = new[]
+				{
+					first,
+					second
+				};
+				var values = new string[2];
+				for (var index = 0; index < constructs.Length; index++)
+				{
+					var construct = constructs[index];
+					switch (construct)
+					{
+					case Binding binding:
+						values[index] = binding.Name;
+						break;
+					case Scope scope:
+						values[index] = scope.Name;
+						break;
+					case Token token:
+						values[index] = token.Value;
+						break;
+					}
+				}
+				return string.CompareOrdinal(values[0],values[1]);
+			});
+		}
+		
 		/// <summary>Creates a new binding within this scope. (Automatically assigns the parent)</summary>
 		/// <param name="name">Left side.</param>
 		/// <param name="value">Right side.</param>
