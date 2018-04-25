@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using Clausewitz.Constructs;
 namespace Clausewitz.IO
 {
@@ -23,6 +24,15 @@ namespace Clausewitz.IO
 			return System.IO.File.ReadAllText(Address);
 		}
 
+		/// <summary>
+		/// Writes the given text into this file.
+		/// </summary>
+		/// <returns></returns>
+		internal void WriteText(string data)
+		{
+			System.IO.File.WriteAllText(Address, data);
+		}
+
 		/// <inheritdoc />
 		public string Address
 		{
@@ -36,6 +46,21 @@ namespace Clausewitz.IO
 		public new Directory Parent
 		{
 			get;
+		}
+
+		/// <summary>
+		/// Files can include only end-comments, this property redirects to EndComments.
+		/// </summary>
+		public new List<string> Comments
+		{
+			get
+			{
+				return EndComments;
+			}
+			set
+			{
+				EndComments = value;
+			}
 		}
 	}
 }

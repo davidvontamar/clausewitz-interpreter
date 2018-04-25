@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 using Clausewitz.Constructs;
 using Clausewitz.IO;
@@ -57,6 +56,23 @@ namespace Clausewitz
 			// Interpret the file:
 			Interpret(file);
 			return file;
+		}
+
+		/// <summary>Translates data back into Clausewitz syntax and writes down to the actual file.</summary>
+		/// <param name="file">Extended.</param>
+		public static void Write(this File file)
+		{
+			file.WriteText(Translate(file));
+		}
+
+		/// <summary>Translates data back into Clausewitz syntax and writes down all files within this directory.</summary>
+		/// <param name="directory">Extended</param>
+		public static void Write(this Directory directory)
+		{
+			foreach (var file in directory.Files)
+				file.Write();
+			foreach (var subDirectory in directory.Directories)
+				subDirectory.Write();
 		}
 
 		/// <summary>Interprets a file and all of its inner scopes recursively.</summary>
@@ -121,7 +137,9 @@ namespace Clausewitz
 						scope = scope.Parent;
 					}
 					else
+					{
 						Log.SendError("Missing scope clause pair for '}'.", details);
+					}
 
 					// Associate end comments:
 					if (comments.Count > 0)
@@ -315,6 +333,89 @@ namespace Clausewitz
 			if ((token.Length > 0) && !@string)
 				tokens.Add((token, line));
 			return tokens;
+		}
+
+		/// <summary>Translates data back into Clausewitz syntax.</summary>
+		/// <param name="root"></param>
+		/// <returns></returns>
+		internal static string Translate(Scope root)
+		{
+			var data = string.Empty;
+			var newline = Environment.NewLine;
+			var tabs = new string('\t', root.Level);
+			foreach (var construct in root.Members)
+			{
+				// Only ordinary scopes may include preceding comments:
+				if (!(root is File))
+					foreach (var comment in construct.Comments)
+						data += tabs + "# " + comment + newline;
+
+				// Translate the actual type:
+				switch (construct)
+				{
+				case Scope scope:
+					if (string.IsNullOrWhiteSpace(scope.Name))
+						data += tabs + '{';
+					else
+						data += tabs + scope.Name + " = {";
+					if (scope.Members.Count > 0)
+					{
+						data += newline + Translate(scope);
+						foreach (var comment in scope.EndComments)
+							data += tabs + "\t" + "# " + comment + newline;
+						data += tabs + '}' + newline;
+					}
+					else
+					{
+						data += '}' + newline;
+					}
+					break;
+				case Binding binding:
+					data += tabs + binding.Name + " = " + binding.Value + newline;
+					break;
+				case Token token:
+					if (root.Indented)
+					{
+						data += tabs + token.Value + newline;
+					}
+					else
+					{
+						var preceding = " ";
+						var following = string.Empty;
+
+						// Preceding characters:
+						if (root.Members.First() == token)
+							preceding = tabs;
+						else if (token.Comments.Count > 0)
+							preceding = tabs;
+						else if (root.Members.First() != token)
+							if (!(root.Members[root.Members.IndexOf(token) - 1] is Token))
+								preceding = tabs;
+
+						// Following characters:
+						if (root.Members.Last() != token)
+						{
+							var next = root.Members[root.Members.IndexOf(token) + 1];
+							if (!(next is Token))
+								following = newline;
+							if (next.Comments.Count > 0)
+								following = newline;
+						}
+						else if (root.Members.Last() == token)
+						{
+							following = newline;
+						}
+						data += preceding + token.Value + following;
+					}
+					break;
+				}
+			}
+
+			// Append end comments at files:
+			if (root is File)
+				foreach (var comment in root.Comments)
+					data += newline + "# " + comment;
+			return data;
 		}
 
 		/// <summary>Reads & interprets all files or data found in the given address.</summary>
