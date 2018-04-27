@@ -31,9 +31,11 @@ namespace Clausewitz
 		/// Sends an exception to the log.
 		/// </summary>
 		/// <param name="exception">Extended.</param>
-		/// <param name="details">Additional details.</param>
-		public static void Send(this Exception exception, string details = "")
+		public static void Send(this Exception exception)
 		{
+			var details = string.Empty;
+			if (exception is Interpreter.SyntaxException syntaxException)
+				details = syntaxException.Details;
 			var message = new Message(Message.Types.Error, exception.Message, details, exception);
 			Send(message);
 		}
@@ -43,38 +45,21 @@ namespace Clausewitz
 		public static void Send(Message message)
 		{
 			Messages.Add(message);
-			MessageSent?.Invoke(new LogEventArgs(message));
+			MessageSent?.Invoke( message );
 		}
 
 		/// <summary>Contains all messages.</summary>
 		public static readonly List<Message> Messages = new List<Message>();
 
 		/// <summary>Special delegate to deliver the message as an event argument.</summary>
-		/// <param name="message"></param>
-		public delegate void LogHandler(LogEventArgs message);
+		/// <param name="message">The message that was sent.</param>
+		public delegate void MessageHandler( Message message );
 
 		/// <summary>
 		///     Fires when a new message is sent. Use this event at Console applications or elsewhere to track log messages at
 		///     runtime.
 		/// </summary>
-		public static event LogHandler MessageSent;
-
-		/// <summary>Special event args for handling messages.</summary>
-		public class LogEventArgs : EventArgs
-		{
-			/// <summary>Constructor.</summary>
-			/// <param name="message">Message.</param>
-			public LogEventArgs(Message message)
-			{
-				Message = message;
-			}
-
-			/// <summary>Message.</summary>
-			public Message Message
-			{
-				get;
-			}
-		}
+		public static event MessageHandler MessageSent;
 
 		/// <summary>Log.Message struct.</summary>
 		public struct Message

@@ -10,11 +10,21 @@
         "runtime": {
           "Clausewitz CLI.dll": {}
         }
+      },
+      "Clausewitz interpreter/1.0.0": {
+        "runtime": {
+          "Clausewitz interpreter.dll": {}
+        }
       }
     }
   },
   "libraries": {
     "Clausewitz CLI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Clausewitz interpreter/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

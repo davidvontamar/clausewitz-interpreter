@@ -19,16 +19,16 @@ namespace Clausewitz
 		{
 			// This checks whether the address is local or full:
 			if (!address.IsFullAddress())
-				address = Environment.CurrentDirectory + address;
+				address = Environment.CurrentDirectory + '\\' + address;
 
 			// Interpret all files and directories found within this directory:
-			var directory = new Directory(null, Path.GetDirectoryName(address));
+			var directory = new Directory(null, Path.GetFileNameWithoutExtension(address));
 
-			// If doesn't exist, notify an error (and return an empty directory).
+			// If doesn't exist, notify an error.
 			if (!System.IO.Directory.Exists(address))
 			{
 				Log.SendError("Could not locate the directory.", address);
-				return directory;
+				return null;
 			}
 
 			// Read the directory:
@@ -45,17 +45,7 @@ namespace Clausewitz
 			if (!address.IsFullAddress())
 				address = Environment.CurrentDirectory + address;
 			var file = new File(null, Path.GetFileName(address));
-
-			// If doesn't exist, notify an error (and return an empty file).
-			if (!System.IO.File.Exists(address))
-			{
-				Log.SendError("Could not locate the file.", address);
-				return file;
-			}
-
-			// Interpret the file:
-			Interpret(file);
-			return file;
+			return TryInterpret(file);
 		}
 
 		/// <summary>Translates data back into Clausewitz syntax and writes down to the actual file.</summary>
@@ -73,154 +63,6 @@ namespace Clausewitz
 				file.Write();
 			foreach (var subDirectory in directory.Directories)
 				subDirectory.Write();
-		}
-
-		/// <summary>Interprets a file and all of its inner scopes recursively.</summary>
-		/// <param name="file">A Clausewitz file.</param>
-		internal static void Interpret(File file)
-		{
-			// Tokenize the file:
-			var tokens = Tokenize(file);
-
-			// All associated comments so far.
-			var comments = new List<string>();
-
-			// Current scope.
-			Scope scope = file;
-
-			// Interpretation loop:
-			for (var index = 0; index < tokens.Count; index++)
-			{
-				// All current information:
-				var token = tokens[index].token;
-				var nextToken = index < (tokens.Count - 1) ?
-					tokens[index + 1].token :
-					string.Empty;
-				var prevToken = index > 0 ?
-					tokens[index - 1].token :
-					string.Empty;
-				var prevPrevToken = index > 1 ?
-					tokens[index - 2].token :
-					string.Empty;
-				var details = string.Format("Token: '{0}'\nLine: {1}\nFile: {2}", token, tokens[index].line, file.Address);
-
-				// Interpret tokens:
-				switch (token)
-				{
-				// Enter a new scope:
-				case "{":
-				{
-					// Participants:
-					var name = prevPrevToken;
-					var binding = prevToken;
-
-					// Syntax check:
-					if (binding == "=")
-						if (IsValidValue(name))
-							scope = scope.NewScope(name);
-						else
-							Log.SendError("Invalid name at scope binding.", details);
-					else
-						scope = scope.NewScope();
-					AssociateComments(scope);
-					break;
-				}
-
-				// Exit the current scope:
-				case "}":
-				{
-					// Check if the current scope is the file, if so, then notify an error of a missing clause pair.
-					if (!(scope is File))
-					{
-						if (scope.Sorted)
-							scope.Sort();
-						scope = scope.Parent;
-					}
-					else
-					{
-						Log.SendError("Missing scope clause pair for '}'.", details);
-					}
-
-					// Associate end comments:
-					if (comments.Count > 0)
-					{
-						scope.EndComments.AddRange(comments);
-						comments.Clear();
-					}
-					break;
-				}
-
-				// Binding operator:
-				case "=":
-				{
-					// Participants:
-					var name = prevToken;
-					var value = nextToken;
-
-					// Skip scope binding: (handled at "{" case, otherwise will claim as syntax error.)
-					if (value == "{")
-						break;
-
-					// Syntax check:
-					if (!IsValidValue(name))
-						Log.SendError("Invalid name at binding.", details);
-					else if (!IsValidValue(value))
-						Log.SendError("Invalid value at binding.", details);
-					else
-						scope.NewBinding(name, value);
-					AssociateComments();
-					break;
-				}
-
-				// Comment/pragma:
-				case "#":
-				{
-					// Attached means the comment comes at the same line with another language construct:
-					// If the comment comes at the same line with another construct, then it will be associated to that construct.
-					// If the comment takes a whole line then it will be stacked and associated with the next construct when it is created.
-					// Comments are responsbile for pragmas as well when utilizing square brackets.
-					var isAttached = tokens[index].line == tokens[index - 1].line;
-					if (isAttached)
-						scope.Members.Last().Comments.Add(nextToken);
-					else
-						comments.Add(nextToken);
-					break;
-				}
-
-				// Unattached value/word token:
-				default:
-				{
-					// Check if bound:
-					var isBound = prevToken.Contains("=") || nextToken.Contains("=");
-
-					// Check if commented:
-					var isComment = prevToken.Contains("#");
-
-					// Skip those cases:
-					if (!isBound && !isComment)
-						if (IsValidValue(token))
-							scope.NewToken(token);
-						else
-							Log.SendError("Unexpected token.", details);
-					AssociateComments();
-					break;
-				}
-
-				// End of switch body.
-				}
-			}
-
-			// This local method helps with associating the stacking comments with the latest language construct.
-			void AssociateComments(Construct construct = null, bool endComments = false)
-			{
-				if (comments.Count == 0)
-					return;
-				if (construct == null)
-					construct = scope.Members.Last();
-				if (!endComments)
-					construct.Comments.AddRange(comments);
-				comments.Clear();
-			}
 		}
 
 		/// <summary>Checks if a token is a valid value in Clausewitz syntax standards for both names & values.</summary>
@@ -260,8 +102,8 @@ namespace Clausewitz
 			// Tokenization loop:
 			foreach (var @char in data)
 			{
-				// Keep tokenizing a string unless a switching delimiter comes.
-				if (@string && (@char != '"'))
+				// Keep tokenizing a string unless a switching delimiter comes outside escape.
+				if (@string && !((@char == '"') && (prevChar != '\\')))
 					goto tokenize;
 
 				// Keep tokenizing a comment unless a switching delimiter comes.
@@ -418,18 +260,209 @@ namespace Clausewitz
 			return data;
 		}
 
-		/// <summary>Reads & interprets all files or data found in the given address.</summary>
+		/// <summary>Interprets a file and all of its inner scopes recursively.</summary>
+		/// <param name="file">A Clausewitz file.</param>
+		/// <exception cref="SyntaxException"></exception>
+		private static void Interpret(File file)
+		{
+			// Tokenize the file:
+			var tokens = Tokenize(file);
+
+			// All associated comments so far.
+			var comments = new List<string>();
+
+			// Current scope.
+			Scope scope = file;
+
+			// Interpretation loop:
+			for (var index = 0; index < tokens.Count; index++)
+			{
+				// All current information:
+				var token = tokens[index].token;
+				var nextToken = index < (tokens.Count - 1) ?
+					tokens[index + 1].token :
+					string.Empty;
+				var prevToken = index > 0 ?
+					tokens[index - 1].token :
+					string.Empty;
+				var prevPrevToken = index > 1 ?
+					tokens[index - 2].token :
+					string.Empty;
+				var line = tokens[index].line;
+
+				// Interpret tokens:
+				switch (token)
+				{
+				// Enter a new scope:
+				case "{":
+				{
+					// Participants:
+					var name = prevPrevToken;
+					var binding = prevToken;
+
+					// Syntax check:
+					if (binding == "=")
+						if (IsValidValue(name))
+							scope = scope.NewScope(name);
+						else
+							throw new SyntaxException("Invalid name at scope binding.", file, line, token);
+					else
+						scope = scope.NewScope();
+					AssociateComments(scope);
+					break;
+				}
+
+				// Exit the current scope:
+				case "}":
+				{
+					// Check if the current scope is the file, if so, then notify an error of a missing clause pair.
+					if (!(scope is File))
+					{
+						if (scope.Sorted)
+							scope.Sort();
+						scope = scope.Parent;
+					}
+					else
+					{
+						throw new SyntaxException("Missing scope clause pair for '}'", file, line, token);
+					}
+
+					// Associate end comments:
+					if (comments.Count > 0)
+					{
+						scope.EndComments.AddRange(comments);
+						comments.Clear();
+					}
+					break;
+				}
+
+				// Binding operator:
+				case "=":
+				{
+					// Participants:
+					var name = prevToken;
+					var value = nextToken;
+
+					// Skip scope binding: (handled at "{" case, otherwise will claim as a syntax error.)
+					if (value == "{")
+						break;
+
+					// Syntax check:
+					if (!IsValidValue(name))
+						throw new SyntaxException("Invalid name at binding.", file, line, token);
+					if (!IsValidValue(value))
+						throw new SyntaxException("Invalid value at binding.", file, line, token);
+					scope.NewBinding(name, value);
+					AssociateComments();
+					break;
+				}
+
+				// Comment/pragma:
+				case "#":
+				{
+					// Attached means the comment comes at the same line with another language construct:
+					// If the comment comes at the same line with another construct, then it will be associated to that construct.
+					// If the comment takes a whole line then it will be stacked and associated with the next construct when it is created.
+					// Comments are responsbile for pragmas as well when utilizing square brackets.
+					var lineOfPrevToken = index > 0 ?
+						tokens[index - 1].line :
+						-1;
+					var isAttached = line == lineOfPrevToken;
+					if (isAttached)
+						scope.Members.Last().Comments.Add(nextToken);
+					else
+						comments.Add(nextToken);
+					break;
+				}
+
+				// Unattached value/word token:
+				default:
+				{
+					// Check if bound:
+					var isBound = prevToken.Contains("=") || nextToken.Contains("=");
+
+					// Check if commented:
+					var isComment = prevToken.Contains("#");
+
+					// Skip those cases:
+					if (!isBound && !isComment)
+						if (IsValidValue(token))
+						{
+							scope.NewToken(token);
+							AssociateComments();
+						}
+						else
+						{
+							throw new SyntaxException("Unexpected token.", file, line, token);
+						}
+					break;
+				}
+
+				// End of switch body.
+				}
+			}
+
+			// This local method helps with associating the stacking comments with the latest language construct.
+			void AssociateComments(Construct construct = null, bool endComments = false)
+			{
+				if (comments.Count == 0)
+					return;
+				if (construct == null)
+					construct = scope.Members.Last();
+				if (!endComments)
+					construct.Comments.AddRange(comments);
+				comments.Clear();
+			}
+		}
+
+		/// <summary>
+		///     Reads & interprets all files or data found in the given address. It will attempt to load & interpret each
+		///     file, however if an error has occurred it will skip the specific files.
+		/// </summary>
 		/// <param name="parent">Parent directory.</param>
 		private static void ReadAll(Directory parent)
 		{
 			// Read files:
 			foreach (var file in System.IO.Directory.GetFiles(parent.Address))
 				if (file.EndsWith(".txt", StringComparison.OrdinalIgnoreCase))
-					Interpret(parent.NewFile(Path.GetFileName(file)));
+				{
+					var newFile = parent.NewFile(Path.GetFileName(file));
+					var interpretedFile = TryInterpret(newFile);
+					if (interpretedFile == null)
+						parent.Files.Remove(newFile);
+				}
 
 			// Read Directories:
 			foreach (var directory in System.IO.Directory.GetDirectories(parent.Address))
-				ReadAll(parent.NewDirectory(Path.GetDirectoryName(directory)));
+				ReadAll(parent.NewDirectory(Path.GetFileNameWithoutExtension(directory)));
+		}
+
+		/// <summary>
+		///     This method will try to interpret a file and handle potential syntax exceptions. If something went wrong
+		///     during the interpretation it will rather not load the file at all, the user will be notified through an error
+		///     message in the log, and the application will continue to run routinely.
+		/// </summary>
+		/// <param name="file">Clausewitz file.</param>
+		/// <returns>Interpreted file or null if an error occurred.</returns>
+		private static File TryInterpret(File file)
+		{
+			if (!System.IO.File.Exists(file.Address))
+			{
+				Log.SendError("Could not locate the file.", file.Address);
+				return null;
+			}
+			try
+			{
+				Interpret(file);
+				Log.Send("Loaded file: \"" + Path.GetFileName(file.Address) + "\".");
+				return file;
+			}
+			catch (SyntaxException syntaxException)
+			{
+				syntaxException.Send();
+				Log.Send("File was not loaded: \"" + Path.GetFileName(file.Address) + "\".");
+			}
+			return null;
 		}
 
 		/// <summary>
@@ -437,5 +470,46 @@ namespace Clausewitz
 		///     operator.
 		/// </summary>
 		internal const string ValueRegexRule = @"[a-zA-Z0-9_.:""]+";
+
+		/// <summary>
+		///     Thrown when syntax-related errors occur during interpretation time which result in a broken & meaningless
+		///     interpretation.
+		/// </summary>
+		public class SyntaxException : Exception
+		{
+			/// <summary>Primary constructor.</summary>
+			/// <param name="message">Message.</param>
+			/// <param name="file">The file where the exception occurred.</param>
+			/// <param name="line">The line at which the exception occurred.</param>
+			/// <param name="token">The token responsible for the exception.</param>
+			internal SyntaxException(string message, File file, int line, string token) : base(message)
+			{
+				File = file;
+				Line = line;
+				Token = token;
+			}
+
+			/// <summary>Retrieves all detailed information in a formatted string.</summary>
+			public string Details
+			{
+				get
+				{
+					return string.Format(
+						"Token: '{0}'\nLine: {1}\nFile: {2}",
+						Token,
+						Line,
+						File.Address.Remove(0, Environment.CurrentDirectory.Length));
+				}
+			}
+
+			/// <summary>The file where the exception occurred.</summary>
+			public readonly File File;
+
+			/// <summary>The line at which the exception occurred.</summary>
+			public readonly int Line;
+
+			/// <summary>The token responsible for the exception.</summary>
+			public readonly string Token;
+		}
 	}
 }

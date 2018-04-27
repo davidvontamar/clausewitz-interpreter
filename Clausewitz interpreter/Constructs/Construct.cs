@@ -26,7 +26,7 @@ namespace Clausewitz.Constructs
 					if (currentScope == null)
 						return parentScopes;
 					parentScopes++;
-					currentScope = Parent.Parent;
+					currentScope = currentScope.Parent;
 				}
 			}
 		}

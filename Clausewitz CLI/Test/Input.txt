@@ -1,0 +1,29 @@
+#[sort all]
+Named_scope = {
+	#[unindent]
+	OR = {
+		B
+		# Comment
+		A C # End comment
+	}
+}
+# Unnamed scope
+{
+	text = "\"escaped quote"
+	1 = 2
+	"English"
+	#[unindent all]
+	colors = {
+	    {
+		    255
+		    255
+		    255
+	    }
+        {
+            255 # R
+            255 # G
+            255 # B
+        }
+	}
+}
+# File comments.

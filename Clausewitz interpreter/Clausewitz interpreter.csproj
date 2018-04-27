@@ -3,4 +3,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>Clausewitz</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DocumentationFile>bin\Release\netcoreapp2.0\Clausewitz interpreter.xml</DocumentationFile>
+  </PropertyGroup>
 </Project>

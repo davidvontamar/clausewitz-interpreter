@@ -25,7 +25,7 @@ namespace Clausewitz.IO
 					address = currentExplorable.Name + '\\' + address;
 				else
 					address = currentExplorable.Name;
-				currentExplorable = explorable.Parent;
+				currentExplorable = currentExplorable.Parent;
 			}
 		}
 

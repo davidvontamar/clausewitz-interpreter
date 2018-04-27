@@ -196,6 +196,16 @@
         "build": {
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
+      },
+      "Clausewitz interpreter/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v2.0",
+        "compile": {
+          "bin/placeholder/Clausewitz interpreter.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Clausewitz interpreter.dll": {}
+        }
       }
     }
   },
@@ -656,10 +666,16 @@
         "netstandard.library.2.0.0.nupkg.sha512",
         "netstandard.library.nuspec"
       ]
+    },
+    "Clausewitz interpreter/1.0.0": {
+      "type": "project",
+      "path": "../Clausewitz interpreter/Clausewitz interpreter.csproj",
+      "msbuildProject": "../Clausewitz interpreter/Clausewitz interpreter.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.0": [
+      "Clausewitz interpreter >= 1.0.0",
       "Microsoft.NETCore.App >= 2.0.0"
     ]
   },
@@ -692,7 +708,11 @@
       },
       "frameworks": {
         "netcoreapp2.0": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\user\\Documents\\Development\\Rider\\Clausewitz interpreter\\Clausewitz interpreter\\Clausewitz interpreter.csproj": {
+              "projectPath": "C:\\Users\\user\\Documents\\Development\\Rider\\Clausewitz interpreter\\Clausewitz interpreter\\Clausewitz interpreter.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
