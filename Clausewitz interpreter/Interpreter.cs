@@ -93,8 +93,11 @@ namespace Clausewitz
 			// Indicates a delimited comment token.
 			var comment = false;
 
+			// Indicates a new line.
+			var newline = false;
+			
 			// Counts each newline.
-			var line = 0;
+			var line = 1;
 
 			// Keeps track of the previous char.
 			var prevChar = '\0';
@@ -102,13 +105,20 @@ namespace Clausewitz
 			// Tokenization loop:
 			foreach (var @char in data)
 			{
+				// Count a new line.
+				if (newline)
+				{
+					line++;
+					newline = false;
+				}
+				
 				// Keep tokenizing a string unless a switching delimiter comes outside escape.
 				if (@string && !((@char == '"') && (prevChar != '\\')))
-					goto tokenize;
+					goto concat;
 
 				// Keep tokenizing a comment unless a switching delimiter comes.
 				if (comment && !((@char == '\r') || (@char == '\n')))
-					goto tokenize;
+					goto concat;
 
 				// Standard tokenizer:
 				var charToken = '\0';
@@ -118,11 +128,10 @@ namespace Clausewitz
 				case '\r':
 				case '\n':
 					comment = false;
-
 					// Cross-platform compatibility for newlines:
 					if ((prevChar == '\r') && (@char == '\n'))
 						break;
-					line++;
+					newline = true;
 					break;
 
 				// Whitespace (which breaks tokens):
@@ -151,22 +160,22 @@ namespace Clausewitz
 
 				// Any other character:
 				default:
-					goto tokenize;
+					goto concat;
 				}
 
 				// Add new tokens to the list:
 				if ((token.Length > 0) && !@string)
 				{
 					tokens.Add((token, line));
-					token = "";
+					token = string.Empty;
 				}
 				if (charToken != '\0')
 					tokens.Add((new string(charToken, 1), line));
 				prevChar = @char;
 				continue;
 
-				// Tokenize unfinished numbers/words/comments/strings.
-				tokenize:
+				// Concat characters to unfinished numbers/words/comments/strings.
+				concat:
 				token += @char;
 				prevChar = @char;
 			}
@@ -178,8 +187,8 @@ namespace Clausewitz
 		}
 
 		/// <summary>Translates data back into Clausewitz syntax.</summary>
-		/// <param name="root"></param>
-		/// <returns></returns>
+		/// <param name="root">Root scope (file scope)</param>
+		/// <returns>Clausewitz script.</returns>
 		internal static string Translate(Scope root)
 		{
 			var data = string.Empty;
@@ -315,6 +324,13 @@ namespace Clausewitz
 				// Exit the current scope:
 				case "}":
 				{
+					// Associate end comments:
+					if (comments.Count > 0)
+					{
+						scope.EndComments.AddRange(comments);
+						comments.Clear();
+					}
+					
 					// Check if the current scope is the file, if so, then notify an error of a missing clause pair.
 					if (!(scope is File))
 					{
@@ -326,13 +342,7 @@ namespace Clausewitz
 					{
 						throw new SyntaxException("Missing scope clause pair for '}'", file, line, token);
 					}
-
-					// Associate end comments:
-					if (comments.Count > 0)
-					{
-						scope.EndComments.AddRange(comments);
-						comments.Clear();
-					}
+					
 					break;
 				}
 
@@ -369,9 +379,9 @@ namespace Clausewitz
 						-1;
 					var isAttached = line == lineOfPrevToken;
 					if (isAttached)
-						scope.Members.Last().Comments.Add(nextToken);
+						scope.Members.Last().Comments.Add(nextToken.Trim());
 					else
-						comments.Add(nextToken);
+						comments.Add(nextToken.Trim());
 					break;
 				}
 

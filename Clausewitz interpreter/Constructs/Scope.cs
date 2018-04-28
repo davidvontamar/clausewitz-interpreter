@@ -160,7 +160,7 @@ namespace Clausewitz.Constructs
 		}
 
 		/// <summary>Comments located at the end of the scope.</summary>
-		public List<string> EndComments;
+		public List<string> EndComments = new List<string>();
 
 		/// <summary>Child members.</summary>
 		public readonly List<Construct> Members = new List<Construct>();

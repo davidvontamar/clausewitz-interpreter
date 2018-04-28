@@ -59,6 +59,20 @@ namespace Clausewitz.IO
 			return file;
 		}
 
+		/// <summary>
+		/// Returns all directories and then all files within this directory in a single list.
+		/// </summary>
+		public List<IExplorable> Explorables
+		{
+			get
+			{
+				var explorables = new List<IExplorable>();
+				explorables.AddRange(Directories);
+				explorables.AddRange(Files);
+				return explorables;
+			}
+		}
+
 		/// <summary>Sub-directories</summary>
 		public readonly List<Directory> Directories = new List<Directory>();
 
