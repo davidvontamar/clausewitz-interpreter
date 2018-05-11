@@ -3,4 +3,4 @@ Helps with interpreting, reading, writing, editing and querying the contents of 
 
 **A prettyprint of an interpreted clausewitz file:**
 
-![](.screenshots\CLI pretty print.png)
+![](.screenshots\prettyprint.png)
