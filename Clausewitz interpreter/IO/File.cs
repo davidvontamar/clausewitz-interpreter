@@ -46,6 +46,7 @@ namespace Clausewitz.IO
 		public new Directory Parent
 		{
 			get;
+			internal set;
 		}
 
 		/// <summary>

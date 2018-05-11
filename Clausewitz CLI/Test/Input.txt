@@ -10,7 +10,7 @@ Named_scope = {
 	# Penrose
 	{
 		# Say
-		Hi = {{{ I_like_stairs }} A = { B = { I_dont }}}
+		Hi = {{{ I_like_stairs }} A = { B = { C }}}
 		{
 			# Lonely comment
 		}
@@ -23,7 +23,7 @@ Named_scope = {
 	1 = 2
 	"English"
 	#[unindent all]
-	colors = {
+	RGB_color = {
 	    { 255 255 255 }
 	    # Nameless
         {

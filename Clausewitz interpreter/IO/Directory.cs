@@ -37,6 +37,18 @@ namespace Clausewitz.IO
 		public Directory Parent
 		{
 			get;
+			internal set;
+		}
+
+		/// <summary>
+		/// Returns true if this directory has no parent. (Typically "C:\")
+		/// </summary>
+		public bool IsRoot
+		{
+			get
+			{
+				return Parent == null;
+			}
 		}
 
 		/// <summary>Creates a new directory within this directory. (Automatically assigns the parent)</summary>
@@ -62,7 +74,7 @@ namespace Clausewitz.IO
 		/// <summary>
 		/// Returns all directories and then all files within this directory in a single list.
 		/// </summary>
-		public List<IExplorable> Explorables
+		public IEnumerable<IExplorable> Explorables
 		{
 			get
 			{

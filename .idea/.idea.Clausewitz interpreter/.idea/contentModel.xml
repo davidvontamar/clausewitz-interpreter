@@ -16,6 +16,7 @@
         </e>
         <e p="Test" t="Include">
           <e p="Input.txt" t="Include" />
+          <e p="output.txt" t="Include" />
         </e>
       </e>
       <e p="Clausewitz interpreter" t="IncludeRecursive">

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 namespace Clausewitz.IO
@@ -20,9 +21,9 @@ namespace Clausewitz.IO
 			while (true)
 			{
 				if (currentExplorable == null)
-					return Environment.CurrentDirectory + '\\' + address;
+					return address;
 				if (currentExplorable.GetType() == typeof(Directory))
-					address = currentExplorable.Name + '\\' + address;
+					address = Path.Combine(currentExplorable.Name, address);
 				else
 					address = currentExplorable.Name;
 				currentExplorable = currentExplorable.Parent;
@@ -41,6 +42,52 @@ namespace Clausewitz.IO
 			if (!Path.IsPathRooted(address))
 				return false;
 			return Path.GetPathRoot(address) != Path.DirectorySeparatorChar.ToString();
+		}
+		
+		/// <summary>
+		/// Checks if the the given directory is included somewhere within the extended directory.
+		/// </summary>
+		/// <param name="candidate">Extended.</param>
+		/// <param name="parent"></param>
+		/// <returns>True if included.</returns>
+		public static bool IsSubDirectoryOf(this string candidate, string parent)
+		{
+			var isChild = false;
+			var candidateInfo = new DirectoryInfo(candidate);
+			var parentInfo = new DirectoryInfo(parent);
+
+			while (candidateInfo.Parent != null)
+				if (candidateInfo.Parent.FullName == parentInfo.FullName)
+				{
+					isChild = true;
+					break;
+				}
+				else candidateInfo = candidateInfo.Parent;
+			return isChild;
+		}
+
+		/// <summary>
+		/// Retrieves the parent directory connected to all grandparents of parents without any sibling entries.
+		/// </summary>
+		/// <param name="address">Extended.</param>
+		/// <returns>Closest parent.</returns>
+		public static Directory DefineParents(this string address)
+		{
+			if (!address.IsFullAddress())
+				address = Path.Combine(Environment.CurrentDirectory, address);
+			
+			
+			
+			var root = new Directory(null, Path.GetPathRoot(address));
+			var parent = root;
+			var remaining = address.Remove(0, root.Address.Length);
+			while (remaining.Contains(Path.DirectorySeparatorChar))
+			{
+				var name = remaining.Substring(0, remaining.IndexOf(Path.DirectorySeparatorChar));
+				remaining = remaining.Remove(0, name.Length + 1);
+				parent = parent.NewDirectory(name);
+			}
+			return parent;
 		}
 	}
 }

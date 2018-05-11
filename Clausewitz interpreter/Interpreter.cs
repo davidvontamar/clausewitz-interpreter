@@ -22,7 +22,7 @@ namespace Clausewitz
 				address = Environment.CurrentDirectory + '\\' + address;
 
 			// Interpret all files and directories found within this directory:
-			var directory = new Directory(null, Path.GetFileNameWithoutExtension(address));
+			var directory = address.DefineParents().NewDirectory(Path.GetFileNameWithoutExtension(address));
 
 			// If doesn't exist, notify an error.
 			if (!System.IO.Directory.Exists(address))
@@ -43,8 +43,10 @@ namespace Clausewitz
 		{
 			// This checks whether the address is local or full:
 			if (!address.IsFullAddress())
-				address = Environment.CurrentDirectory + address;
-			var file = new File(null, Path.GetFileName(address));
+				address = Environment.CurrentDirectory + '\\' + address;
+			
+			// Read the file:
+			var file = address.DefineParents().NewFile(Path.GetFileName(address));
 			return TryInterpret(file);
 		}
 
@@ -53,6 +55,7 @@ namespace Clausewitz
 		public static void Write(this File file)
 		{
 			file.WriteText(Translate(file));
+			Log.Send("File saved: \"" + Path.GetFileName(file.Address) + "\".");
 		}
 
 		/// <summary>Translates data back into Clausewitz syntax and writes down all files within this directory.</summary>
@@ -340,7 +343,7 @@ namespace Clausewitz
 					}
 					else
 					{
-						throw new SyntaxException("Missing scope clause pair for '}'", file, line, token);
+						throw new SyntaxException("Missing an openning pair '{' for a clause scope", file, line, token);
 					}
 					
 					break;
@@ -412,6 +415,9 @@ namespace Clausewitz
 				}
 			}
 
+			if (scope != file)
+				throw new SyntaxException("Missing a closing pair '}' for a clause scope.", file, tokens.Last().line, tokens.Last().token);
+			AssociateComments(scope, true);
 			// This local method helps with associating the stacking comments with the latest language construct.
 			void AssociateComments(Construct construct = null, bool endComments = false)
 			{
@@ -421,6 +427,8 @@ namespace Clausewitz
 					construct = scope.Members.Last();
 				if (!endComments)
 					construct.Comments.AddRange(comments);
+				else if (construct is Scope commentScope)
+					commentScope.EndComments.AddRange(comments);
 				comments.Clear();
 			}
 		}

@@ -14,11 +14,15 @@ namespace Clausewitz.CLI
 		public static void Main()
 		{
 			Console.WriteLine(
-				"Welcome to the Clausewitz interprter CLI.\nCopyright © 2018 under the LGPL v3.0 license - written by David von Tamar.");
+				"Welcome to the Clausewitz interprter CLI.\nCopyright © 2018 under LGPL v3.0 license. Written by David von Tamar.");
 			Log.MessageSent += LogMessage;
 			Console.CursorVisible = true;
-			var input = Interpreter.ReadDirectory(@"test");
-			PrettyPrint(input);
+			var input = Interpreter.ReadFile(@"test\input.txt");
+			PrettyPrint(input.Parent.Parent);
+			
+			input.Name = "output.txt";
+			input.Write();
+			
 			Log.Send("Operation finished, press any key to exit.");
 			Console.ReadKey();
 		}
