@@ -4,12 +4,18 @@ using Clausewitz.Constructs;
 using Clausewitz.IO;
 namespace Clausewitz.CLI
 {
+	
 	/// <summary>
 	///     The CLI: "Command Line Interface" of the Clausewitz interpreter helps the user/developer to interact with the
 	///     interpreter through a console interface for some basic commands.
 	/// </summary>
 	public static class CLI
 	{
+		/// <summary>
+		/// Indicates that an error occured during the interpretation time.
+		/// </summary>
+		private static bool ErrorOccured;
+		
 		/// <summary>Main entry point.</summary>
 		public static void Main()
 		{
@@ -18,11 +24,12 @@ namespace Clausewitz.CLI
 			Log.MessageSent += LogMessage;
 			Console.CursorVisible = true;
 			var input = Interpreter.ReadFile(@"test\input.txt");
-			PrettyPrint(input.Parent.Parent);
-			
-			input.Name = "output.txt";
-			input.Write();
-			
+			if (!ErrorOccured)
+			{
+				PrettyPrint(input.Parent.Parent);
+				input.Name = "output.txt";
+				input.Write();
+			}
 			Log.Send("Operation finished, press any key to exit.");
 			Console.ReadKey();
 		}
@@ -106,6 +113,7 @@ namespace Clausewitz.CLI
 			switch (message.Type)
 			{
 			case Log.Message.Types.Error:
+				ErrorOccured = true;
 				Console.BackgroundColor = ConsoleColor.Red;
 				Console.ForegroundColor = ConsoleColor.White;
 				Console.Write("ERROR");
@@ -141,7 +149,7 @@ namespace Clausewitz.CLI
 		{
 			if (current == null)
 				current = root;
-			if (current is Construct construct && !(current is File))
+			if (current is Construct construct)
 				foreach (var comment in construct.Comments)
 				{
 					// Preceding comments:

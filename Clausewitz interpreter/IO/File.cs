@@ -48,20 +48,5 @@ namespace Clausewitz.IO
 			get;
 			internal set;
 		}
-
-		/// <summary>
-		/// Files can include only end-comments, this property redirects to EndComments.
-		/// </summary>
-		public new List<string> Comments
-		{
-			get
-			{
-				return EndComments;
-			}
-			set
-			{
-				EndComments = value;
-			}
-		}
 	}
 }

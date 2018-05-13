@@ -1,3 +1,9 @@
+# File comment.
+# Another file comment.
+
+# Yet another one.
+
+# Not file comment.
 #[sort all]
 Named_scope = {
 	#[unindent]
@@ -34,4 +40,4 @@ Named_scope = {
         }
 	}
 }
-# File comments.
+# File end comments.

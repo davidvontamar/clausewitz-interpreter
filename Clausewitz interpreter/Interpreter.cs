@@ -130,7 +130,15 @@ namespace Clausewitz
 				// Newline: (also comment delimiter)
 				case '\r':
 				case '\n':
-					comment = false;
+					// Switch comments:
+					if (comment)
+					{
+						comment = false;
+						
+						// Add empty comments:
+						if (token.Length == 0)
+							tokens.Add((string.Empty, line));
+					}
 					// Cross-platform compatibility for newlines:
 					if ((prevChar == '\r') && (@char == '\n'))
 						break;
@@ -197,12 +205,21 @@ namespace Clausewitz
 			var data = string.Empty;
 			var newline = Environment.NewLine;
 			var tabs = new string('\t', root.Level);
+			
+			// Files include their own comments at the beginning followed by an empty line.
+			if (root is File)
+				if(root.Comments.Count > 0)
+				{
+					foreach (var comment in root.Comments)
+						data += tabs + "# " + comment + newline;
+					data += newline;
+				}
+			
+			// Translate scope members:
 			foreach (var construct in root.Members)
 			{
-				// Only ordinary scopes may include preceding comments:
-				if (!(root is File))
-					foreach (var comment in construct.Comments)
-						data += tabs + "# " + comment + newline;
+				foreach (var comment in construct.Comments)
+					data += tabs + "# " + comment + newline;
 
 				// Translate the actual type:
 				switch (construct)
@@ -274,14 +291,14 @@ namespace Clausewitz
 
 		/// <summary>Interprets a file and all of its inner scopes recursively.</summary>
 		/// <param name="file">A Clausewitz file.</param>
-		/// <exception cref="SyntaxException"></exception>
+		/// <exception cref="SyntaxException">A syntax error was encountered during interpretation.</exception>
 		private static void Interpret(File file)
 		{
 			// Tokenize the file:
 			var tokens = Tokenize(file);
 
 			// All associated comments so far.
-			var comments = new List<string>();
+			var comments = new List<(string text,int line)>();
 
 			// Current scope.
 			Scope scope = file;
@@ -328,11 +345,7 @@ namespace Clausewitz
 				case "}":
 				{
 					// Associate end comments:
-					if (comments.Count > 0)
-					{
-						scope.EndComments.AddRange(comments);
-						comments.Clear();
-					}
+					AssociateComments(scope, true);
 					
 					// Check if the current scope is the file, if so, then notify an error of a missing clause pair.
 					if (!(scope is File))
@@ -376,15 +389,23 @@ namespace Clausewitz
 					// Attached means the comment comes at the same line with another language construct:
 					// If the comment comes at the same line with another construct, then it will be associated to that construct.
 					// If the comment takes a whole line then it will be stacked and associated with the next construct when it is created.
+					// If there was an empty line after the comment at the beginning of the file, then it will be associated with the file itself.
 					// Comments are responsbile for pragmas as well when utilizing square brackets.
 					var lineOfPrevToken = index > 0 ?
 						tokens[index - 1].line :
 						-1;
 					var isAttached = line == lineOfPrevToken;
+
+					// Associate attached comments HERE:
 					if (isAttached)
-						scope.Members.Last().Comments.Add(nextToken.Trim());
+					{
+						if (prevToken != "{")
+							scope.Members.Last().Comments.Add(nextToken.Trim());
+						else
+							scope.Comments.Add(nextToken.Trim());
+					}
 					else
-						comments.Add(nextToken.Trim());
+						comments.Add((nextToken.Trim(), line));
 					break;
 				}
 
@@ -415,20 +436,64 @@ namespace Clausewitz
 				}
 			}
 
+			// Missing closing clause pair for scopes above the file level:
 			if (scope != file)
 				throw new SyntaxException("Missing a closing pair '}' for a clause scope.", file, tokens.Last().line, tokens.Last().token);
+			
+			// Associate end-comments (of the file):
 			AssociateComments(scope, true);
+			
 			// This local method helps with associating the stacking comments with the latest language construct.
 			void AssociateComments(Construct construct = null, bool endComments = false)
 			{
+				// No comments, exit.
 				if (comments.Count == 0)
+					return;
+				
+				// Associate with last construct if parameter is null.
+				if ((construct == null) && (scope.Members.Count == 0))
 					return;
 				if (construct == null)
 					construct = scope.Members.Last();
-				if (!endComments)
-					construct.Comments.AddRange(comments);
+				
+				// Leading comments at the beginning of a file:
+				if (!endComments && construct.Parent is File && (construct.Parent.Members.First() == construct))
+				{
+					var associatedWithFile = new List<string>();
+					var associatedWithConstruct = new List<string>();
+					var associateWithFile = false;
+					
+					// Reverse iteration:
+					for (var index = comments.Count - 1; index >= 0 ; index--) 
+					{
+						if(!associateWithFile)
+						{
+							var prevCommentLine = index < (comments.Count - 1) ?
+								comments[index + 1].line :
+								-1;
+							var commentLine = comments[index].line;
+							if ((prevCommentLine > 1) && ((prevCommentLine - commentLine) != 1))
+								associateWithFile = true;
+						}
+						
+						if (associateWithFile)
+							associatedWithFile.Add(comments[index].text);
+						else
+							associatedWithConstruct.Add(comments[index].text);
+					}
+					// Reverse & append:
+					construct.Parent.Comments.AddRange(associatedWithFile.Reverse<string>());
+					construct.Comments.AddRange(associatedWithConstruct.Reverse<string>());
+				}
+				else if (!endComments)
+				{
+					foreach (var comment in comments)
+						construct.Comments.Add(comment.text);
+				}
+					
 				else if (construct is Scope commentScope)
-					commentScope.EndComments.AddRange(comments);
+					foreach (var comment in comments)
+						commentScope.EndComments.Add(comment.text);
 				comments.Clear();
 			}
 		}

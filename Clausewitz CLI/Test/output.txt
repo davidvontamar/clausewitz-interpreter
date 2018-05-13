@@ -1,3 +1,9 @@
+# File comment.
+# Another file comment.
+# Yet another one.
+
+# Not file comment.
+# [sort all]
 Named_scope = {
 	# Penrose
 	{
@@ -26,6 +32,7 @@ Named_scope = {
 	}
 	# Outer end comment
 }
+# Unnamed scope
 {
 	text = "\"escaped quote"
 	1 = 2
@@ -47,3 +54,7 @@ Named_scope = {
 		}
 	}
 }
+
+# File comment.
+# Another file comment.
+# Yet another one.

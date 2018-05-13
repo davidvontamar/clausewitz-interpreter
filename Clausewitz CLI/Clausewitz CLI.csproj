@@ -10,4 +10,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Clausewitz interpreter\Clausewitz interpreter.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Test\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Run.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
