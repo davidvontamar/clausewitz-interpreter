@@ -1,1 +1,0 @@
-dotnet "Clausewitz CLI.dll"
