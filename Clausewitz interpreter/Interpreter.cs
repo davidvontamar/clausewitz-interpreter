@@ -284,7 +284,7 @@ namespace Clausewitz
 
 			// Append end comments at files:
 			if (root is File)
-				foreach (var comment in root.Comments)
+				foreach (var comment in root.EndComments)
 					data += newline + "# " + comment;
 			return data;
 		}

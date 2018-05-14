@@ -55,6 +55,4 @@ Named_scope = {
 	}
 }
 
-# File comment.
-# Another file comment.
-# Yet another one.
+# File end comments.
