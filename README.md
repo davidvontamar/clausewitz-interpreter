@@ -1,5 +1,5 @@
 ## Dependencies
-1. The CLI requires **my** [ANSITerm](david-tamar/console.net) library.
+1. The CLI requires **my** [ANSITerm](github.com/david-tamar/console.net) library.
 2. The interpreter requires **.NET Core 2.0**.
 
 ## Introduction
