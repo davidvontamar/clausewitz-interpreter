@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+
 namespace Clausewitz.Constructs
 {
 	/// <summary>Basic Clausewitz language construct.</summary>
@@ -31,9 +32,13 @@ namespace Clausewitz.Constructs
 			}
 		}
 
+		/// <summary>The parent scope.</summary>
+		public Scope Parent { get; internal set; }
+
 		/// <summary>
-		///     Extracts pragmas from associated comments within brackets, which are separated by commas, and their keywords
-		///     which are separated by spaces.
+		/// Extracts pragmas from associated comments within brackets, which are separated
+		/// by commas, and their keywords
+		/// which are separated by spaces.
 		/// </summary>
 		public IEnumerable<Pragma> Pragmas
 		{
@@ -44,14 +49,17 @@ namespace Clausewitz.Constructs
 				if (Comments != null)
 					allComments.AddRange(Comments);
 				if (this is Scope scope)
+				{
 					if (scope.EndComments != null)
 						allComments.AddRange(scope.EndComments);
+				}
 				if (allComments.Count == 0)
 					return @return;
 				foreach (var comment in allComments)
 				{
 					if (!(comment.Contains('[') && comment.Contains(']')))
 						continue;
+
 					// All pragmas are guaranteed to be lower case and trimmed.
 					var pragmas = Regex.Replace(comment.Split('[', ']')[1], @"\s+", " ").ToLower().Split(',');
 					foreach (var pragma in pragmas)
@@ -63,12 +71,5 @@ namespace Clausewitz.Constructs
 
 		/// <summary>Associated comments.</summary>
 		public readonly List<string> Comments = new List<string>();
-
-		/// <summary>The parent scope.</summary>
-		public Scope Parent
-		{
-			get;
-			internal set;
-		}
 	}
 }

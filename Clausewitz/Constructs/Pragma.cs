@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+
 namespace Clausewitz.Constructs
 {
 	/// <summary>
-	///     Every Clausewitz construct may have pragmas within the associated comments. Each pragma includes a set of
-	///     keywords.
+	/// Every Clausewitz construct may have pragmas within the associated comments.
+	/// Each pragma includes a set of
+	/// keywords.
 	/// </summary>
 	public struct Pragma
 	{
@@ -37,7 +39,10 @@ namespace Clausewitz.Constructs
 			return Keywords.IsSupersetOf(keywords.FormatKeywords());
 		}
 
-		/// <summary>Keywords are separated by spaces within each pragma, and their order does not matter.</summary>
+		/// <summary>
+		/// Keywords are separated by spaces within each pragma, and their order does not
+		/// matter.
+		/// </summary>
 		public readonly HashSet<string> Keywords;
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+
 namespace Clausewitz.Constructs
 {
 	/// <summary>
@@ -7,7 +8,8 @@ namespace Clausewitz.Constructs
 	public static class Extensions
 	{
 		/// <summary>
-		/// Checks if a collection of pragmas has the requested pragma with the specified keywords.
+		/// Checks if a collection of pragmas has the requested pragma with the specified
+		/// keywords.
 		/// </summary>
 		/// <param name="pragmas">Extended.</param>
 		/// <param name="keywords">Keywords (all keywords).</param>

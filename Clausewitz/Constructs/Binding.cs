@@ -1,8 +1,9 @@
 ﻿namespace Clausewitz.Constructs
 {
 	/// <summary>
-	///     Any statement which includes the assignment operator '=' in Clausewitz. Including most commands, conditions
-	///     and triggers which come in a single line.
+	/// Any statement which includes the assignment operator '=' in Clausewitz.
+	/// Including most commands, conditions
+	/// and triggers which come in a single line.
 	/// </summary>
 	public class Binding : Construct
 	{

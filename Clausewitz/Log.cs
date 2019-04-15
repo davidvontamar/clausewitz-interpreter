@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+
 namespace Clausewitz
 {
 	/// <summary>
-	///     Logs messages during operation time for the Clausewitz interpreter. Note that this class does not write a log
-	///     file nor notify the user (or the developer) for any messages. Use the event handler to keep track of the messages,
-	///     or write down to file the entire messages list.
+	/// Logs messages during operation time for the Clausewitz interpreter. Note that
+	/// this class does not write a log
+	/// file nor notify the user (or the developer) for any messages. Use the event
+	/// handler to keep track of the messages,
+	/// or write down to file the entire messages list.
 	/// </summary>
 	public static class Log
 	{
@@ -16,15 +18,6 @@ namespace Clausewitz
 		public static void Send(string text, string details = "")
 		{
 			Send(new Message(Message.Types.Info, text, details));
-		}
-		
-		/// <summary>Sends a new error message to the log.</summary>
-		/// <param name="text">Main text line.</param>
-		/// <param name="details">More details.</param>
-		/// <param name="exception">Exception thrown.</param>
-		public static void SendError(string text, string details = "", Exception exception = null)
-		{
-			Send(new Message(Message.Types.Error, text, details, exception));
 		}
 
 		/// <summary>
@@ -45,7 +38,16 @@ namespace Clausewitz
 		public static void Send(Message message)
 		{
 			Messages.Add(message);
-			MessageSent?.Invoke( message );
+			MessageSent?.Invoke(message);
+		}
+
+		/// <summary>Sends a new error message to the log.</summary>
+		/// <param name="text">Main text line.</param>
+		/// <param name="details">More details.</param>
+		/// <param name="exception">Exception thrown.</param>
+		public static void SendError(string text, string details = "", Exception exception = null)
+		{
+			Send(new Message(Message.Types.Error, text, details, exception));
 		}
 
 		/// <summary>Contains all messages.</summary>
@@ -53,11 +55,12 @@ namespace Clausewitz
 
 		/// <summary>Special delegate to deliver the message as an event argument.</summary>
 		/// <param name="message">The message that was sent.</param>
-		public delegate void MessageHandler( Message message );
+		public delegate void MessageHandler(Message message);
 
 		/// <summary>
-		///     Fires when a new message is sent. Use this event at Console applications or elsewhere to track log messages at
-		///     runtime.
+		/// Fires when a new message is sent. Use this event at Console applications or
+		/// elsewhere to track log messages at
+		/// runtime.
 		/// </summary>
 		public static event MessageHandler MessageSent;
 

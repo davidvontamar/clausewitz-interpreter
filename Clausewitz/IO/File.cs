@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using Clausewitz.Constructs;
+﻿using Clausewitz.Constructs;
+
 namespace Clausewitz.IO
 {
-	/// <summary>An extended type of scope, which enforces file name and parent directory.</summary>
+	/// <summary>
+	/// An extended type of scope, which enforces file name and parent
+	/// directory.
+	/// </summary>
 	public class File : Scope, IExplorable
 	{
 		/// <summary>Primary constructor.</summary>
@@ -14,6 +16,15 @@ namespace Clausewitz.IO
 			Name = name;
 			Parent = parent;
 		}
+
+		/// <inheritdoc />
+		public string Address
+		{
+			get { return this.GetAddress(); }
+		}
+
+		/// <inheritdoc />
+		public new Directory Parent { get; internal set; }
 
 		/// <summary>
 		/// Retrieves all text within this file.
@@ -31,22 +42,6 @@ namespace Clausewitz.IO
 		internal void WriteText(string data)
 		{
 			System.IO.File.WriteAllText(Address, data);
-		}
-
-		/// <inheritdoc />
-		public string Address
-		{
-			get
-			{
-				return this.GetAddress();
-			}
-		}
-
-		/// <inheritdoc />
-		public new Directory Parent
-		{
-			get;
-			internal set;
 		}
 	}
 }

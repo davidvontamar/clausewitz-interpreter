@@ -8,10 +8,11 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Clausewitz interpreter\Clausewitz interpreter.csproj"/>
+    <ProjectReference Include="..\..\console.net\ANSITerm\ANSITerm.csproj" />
+    <ProjectReference Include="..\Clausewitz\Clausewitz.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="Test\Input.txt">
+    <None Update="Test\input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Run.bat">

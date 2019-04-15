@@ -4,21 +4,12 @@
 	public interface IExplorable
 	{
 		/// <summary>Full address.</summary>
-		string Address
-		{
-			get;
-		}
+		string Address { get; }
 
 		/// <summary>Name.</summary>
-		string Name
-		{
-			get;
-		}
+		string Name { get; }
 
 		/// <summary>Parent directory.</summary>
-		Directory Parent
-		{
-			get;
-		}
+		Directory Parent { get; }
 	}
 }
