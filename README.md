@@ -5,10 +5,10 @@ This .NET Core interpreter for Clausewitz's scripting language helps with readin
 This interpreter uses an abstract data tree structure when tokenizing the Clausewitz files, and offers pragma commands as sorting and indenting and enforces comment association to prevent their lose, therefore it could be used as a cleanup tool for messy projects that were already made around Clausewitz files.
 
 ## Dependencies
-1. The CLI requires my [ANSITerm](https://github.com/david-tamar/ansi-term)[^1] library, you may download it from Nuget `Tamar.ANSITerm`.
+1. The CLI requires my [ANSITerm](https://github.com/david-tamar/ansi-term)  library<sup>[1](#WhyANSITerm)</sup>, you may download it from Nuget `Tamar.ANSITerm`.
 2. The interpreter requires **.NET Core 2.0**.
 
-[^1]: I created my own ANSI-Compliant System.Console implementation because .NET's default System.Console could not display 24-bit colors properly on Linux terminals which support ANSI escape codes.
+<a name="WhyANSITerm">1</a>: I created my own ANSI-Compliant System.Console implementation because .NET's default System.Console could not display 24-bit colors properly on Linux terminals which support ANSI escape codes.
 
 ## I/O results
 
