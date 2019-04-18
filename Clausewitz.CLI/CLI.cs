@@ -35,14 +35,12 @@ namespace Clausewitz.CLI
 
 		/// <summary>Draws tree structure to the left.</summary>
 		/// <param name="root">
-		/// The initial node. (will stop looking for parents beyond this
-		/// member)
+		/// The initial node. (will stop looking for parents beyond this member)
 		/// </param>
 		/// <param name="current">Current construct.</param>
 		/// <param name="alignment">
 		/// Whether this line opens a new node from its parent scope, or rather drawn above
-		/// or beneath a
-		/// node.
+		/// or beneath a node.
 		/// </param>
 		private static string ConcatTree(object root, object current, Alignment alignment = Alignment.Inner)
 		{

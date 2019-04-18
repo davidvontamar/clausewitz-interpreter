@@ -3,12 +3,12 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>Clausewitz.CLI</RootNamespace>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\console.net\ANSITerm\ANSITerm.csproj" />
     <ProjectReference Include="..\Clausewitz\Clausewitz.csproj" />
   </ItemGroup>
   <ItemGroup>

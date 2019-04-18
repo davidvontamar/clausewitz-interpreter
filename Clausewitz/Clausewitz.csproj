@@ -2,8 +2,21 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RootNamespace>Clausewitz</RootNamespace>
+    <PackageId>Tamar.Clausewitz</PackageId>
+    <Title>Clausewitz.NET</Title>
+    <Authors>david-tamar</Authors>
+    <Copyright>2018-2019 David Tamar</Copyright>
+    <PackageVersion>1.2.0</PackageVersion>
+    <PackageProjectUrl>https://github.com/david-tamar/clausewitz.net</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/david-tamar/clausewitz.net/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/david-tamar/clausewitz.net</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>clausewitz, interpreter</PackageTags>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DocumentationFile>bin\Release\netcoreapp2.0\Clausewitz interpreter.xml</DocumentationFile>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Tamar.ANSITerm" Version="0.1.1" />
+  </ItemGroup>
 </Project>
