@@ -8,8 +8,6 @@ This interpreter uses an abstract data tree structure when tokenizing the Clause
 1. The CLI requires my [ANSITerm](https://github.com/david-tamar/ansi-term)  library<sup>[1](#WhyANSITerm)</sup>, you may download it from Nuget `Tamar.ANSITerm`.
 2. The interpreter requires **.NET Core 2.0**.
 
-<a name="WhyANSITerm">1</a>: I created my own ANSI-Compliant System.Console implementation because .NET's default System.Console could not display 24-bit colors properly on Linux terminals which support ANSI escape codes.
-
 ## I/O results
 
 **A prettyprint of an interpreted clausewitz file:**
@@ -19,3 +17,6 @@ Input: **[input.txt](Clausewitz%20CLI%2FTest%2Finput.txt)**
 Output: **[output.txt](Clausewitz%20CLI%2FTest%2Foutput.txt)**
 
 ![Screenshot of a prettyprint output of a typical Clausewitz file](images/prettyprint.png)
+
+## Notes:
+<a name="WhyANSITerm">1</a>: I created my own ANSI-Compliant System.Console implementation because .NET's default System.Console could not display 24-bit colors properly on Linux terminals which support ANSI escape codes.
