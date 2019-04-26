@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clausewitz", "Clausewitz\Cl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clausewitz.CLI", "Clausewitz.CLI\Clausewitz.CLI.csproj", "{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ANSITerm", "..\ansi-term\ANSITerm\ANSITerm.csproj", "{367A846D-E1FE-4C01-A65F-473AC017B9D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}.Debug|Any CPU.ActiveCfg = Release|Any CPU
 		{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{367A846D-E1FE-4C01-A65F-473AC017B9D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{367A846D-E1FE-4C01-A65F-473AC017B9D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{367A846D-E1FE-4C01-A65F-473AC017B9D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{367A846D-E1FE-4C01-A65F-473AC017B9D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

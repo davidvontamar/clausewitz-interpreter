@@ -9,6 +9,7 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\ansi-term\ANSITerm\ANSITerm.csproj" />
     <ProjectReference Include="..\Clausewitz\Clausewitz.csproj" />
   </ItemGroup>
   <ItemGroup>
