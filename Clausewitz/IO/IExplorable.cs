@@ -1,4 +1,4 @@
-﻿namespace Clausewitz.IO
+﻿namespace Tamar.Clausewitz.IO
 {
 	/// <summary>Scopes which can be explored through a file manager.</summary>
 	public interface IExplorable

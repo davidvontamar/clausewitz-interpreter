@@ -1,12 +1,12 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Linq;
-using Clausewitz.Constructs;
-using Console = ANSITerm.Console;
-using Directory = Clausewitz.IO.Directory;
-using File = Clausewitz.IO.File;
+using Tamar.ANSITerm;
+using Tamar.Clausewitz.Constructs;
+using Directory = Tamar.Clausewitz.IO.Directory;
+using File = Tamar.Clausewitz.IO.File;
 
-namespace Clausewitz.CLI
+namespace Tamar.Clausewitz.CLI
 {
 	/// <summary>
 	/// The CLI: "Command Line Interface" of the Clausewitz interpreter helps the
@@ -18,11 +18,10 @@ namespace Clausewitz.CLI
 		/// <summary>Main entry point.</summary>
 		public static void Main()
 		{
-			Console.WriteLine(
-				"Welcome to Clausewitz interpreter for .NET!\n© 2018-2019 David Tamar, LGPLv3.0");
+			Console.WriteLine("Welcome to Clausewitz interpreter for .NET!\n© 2018-2019 David Tamar, LGPLv3.0");
 			Log.MessageSent += LogMessage;
 			Console.CursorVisible = true;
-			var input = Interpreter.ReadFile(@"Test/input.txt");
+			var input = Interpreter.ReadFile(@"Test\input.txt");
 			if (!errorOccured)
 			{
 				PrettyPrint(input.Parent.Parent);
@@ -140,13 +139,15 @@ namespace Clausewitz.CLI
 			if (current == null)
 				current = root;
 			if (current is Construct construct)
+			{
 				foreach (var comment in construct.Comments)
 				{
 					// Preceding comments:
 					Console.Write(ConcatTree(root, construct, Alignment.Before), TreeFore, DefaultBack);
 					Console.WriteLine(comment, CommentFore);
 				}
-			Console.Write(ConcatTree(root, current, Alignment.Node),TreeFore, DefaultBack);
+			}
+			Console.Write(ConcatTree(root, current, Alignment.Node), TreeFore, DefaultBack);
 			switch (current)
 			{
 				case Binding binding:
@@ -160,9 +161,11 @@ namespace Clausewitz.CLI
 					else if (!string.IsNullOrWhiteSpace(scope.Name))
 						Console.WriteLine(scope.Name, ScopeFore, ScopeBack);
 					else
+					{
 						Console.WriteLine(scope.Members.Count > 0 ?
 							"┐" :
 							"─", TreeFore, DefaultBack);
+					}
 					foreach (var member in scope.Members)
 						PrettyPrint(root, member);
 					foreach (var comment in scope.EndComments)
@@ -192,6 +195,12 @@ namespace Clausewitz.CLI
 		private static readonly Color DefaultBack = Color.Black;
 		private static readonly Color DirectoryBack = Color.FromArgb(128, 128, 0);
 		private static readonly Color DirectoryFore = Color.Yellow;
+
+		/// <summary>
+		/// Indicates that an error occured during the interpretation time.
+		/// </summary>
+		private static bool errorOccured;
+
 		private static readonly Color FileBack = Color.DarkCyan;
 		private static readonly Color FileFore = Color.Cyan;
 		private static readonly Color ScopeBack = Color.Blue;
@@ -199,11 +208,6 @@ namespace Clausewitz.CLI
 		private static readonly Color TokenBack = Color.DarkBlue;
 		private static readonly Color TokenFore = Color.White;
 		private static readonly Color TreeFore = Color.DarkGray;
-
-		/// <summary>
-		/// Indicates that an error occured during the interpretation time.
-		/// </summary>
-		private static bool errorOccured;
 
 		/// <summary>
 		/// Special enum for pretty-printing which determines the junctions at the tree

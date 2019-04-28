@@ -2,7 +2,9 @@
 using System.IO;
 using System.Linq;
 
-namespace Clausewitz.IO
+// ReSharper disable UnusedMember.Global
+
+namespace Tamar.Clausewitz.IO
 {
 	/// <summary>
 	/// Extension class for various interfaces. These extensions are used only within
@@ -24,7 +26,6 @@ namespace Clausewitz.IO
 			if (!address.IsFullAddress())
 				address = Path.Combine(Environment.CurrentDirectory, address);
 
-
 			var root = new Directory(null, Path.GetPathRoot(address));
 			var parent = root;
 			var remaining = address.Remove(0, root.Address.Length);
@@ -42,7 +43,7 @@ namespace Clausewitz.IO
 		/// directory.
 		/// </summary>
 		/// <param name="candidate">Extended.</param>
-		/// <param name="parent"></param>
+		/// <param name="parent">Suspected parent.</param>
 		/// <returns>True if included.</returns>
 		public static bool IsSubDirectoryOf(this string candidate, string parent)
 		{
@@ -95,6 +96,22 @@ namespace Clausewitz.IO
 			if (!Path.IsPathRooted(address))
 				return false;
 			return Path.GetPathRoot(address) != Path.DirectorySeparatorChar.ToString();
+		}
+
+		/// <summary>
+		/// Ensures the address is fully qualified using the correct directory and drive
+		/// separators for each platform.
+		/// </summary>
+		/// <param name="address">Relative or fully qualified path.</param>
+		internal static string ToFullyQualifiedAddress(this string address)
+		{
+			// Replace Windows forward slashes with platform specific separators.
+			address = address.Replace('\\', Path.DirectorySeparatorChar);
+
+			// This checks whether the address is local or full:
+			if (!address.IsFullAddress())
+				address = Environment.CurrentDirectory + Path.DirectorySeparatorChar + address;
+			return address;
 		}
 	}
 }

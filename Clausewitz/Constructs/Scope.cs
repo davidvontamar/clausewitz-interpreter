@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 
-namespace Clausewitz.Constructs
+namespace Tamar.Clausewitz.Constructs
 {
 	/// <summary>Scopes are files, direcotries, and clauses.</summary>
-	public class Scope : Construct
+	public class Scope: Construct
 	{
 		/// <summary>
 		/// Special scope constructor for files (which has no parent scope, but parent
 		/// directory).
 		/// </summary>
 		/// <param name="name">Scope name.</param>
-		protected Scope(string name) : this(null, name)
+		protected Scope(string name): this(null, name)
 		{
 			// implemented at primary constructor.
 		}
@@ -18,7 +18,7 @@ namespace Clausewitz.Constructs
 		/// <summary>Primary constructor.</summary>
 		/// <param name="parent">Parent scope.</param>
 		/// <param name="name">Optional name.</param>
-		private Scope(Scope parent, string name = null) : base(parent)
+		private Scope(Scope parent, string name = null): base(parent)
 		{
 			if (name != null)
 				Name = name;

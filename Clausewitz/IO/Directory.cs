@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Clausewitz.IO
+namespace Tamar.Clausewitz.IO
 {
 	/// <summary>
 	/// Corresponds to a file directory. (Renamed from 'Directory' to 'Folder' due to
@@ -9,7 +9,7 @@ namespace Clausewitz.IO
 	/// alias names for the .NET static
 	/// classes.
 	/// </summary>
-	public class Directory : IExplorable
+	public class Directory: IExplorable
 	{
 		/// <summary>Primary constructor</summary>
 		/// <param name="parent">Parent directory.</param>

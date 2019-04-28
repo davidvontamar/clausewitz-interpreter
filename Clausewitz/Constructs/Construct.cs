@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Clausewitz.Constructs
+namespace Tamar.Clausewitz.Constructs
 {
 	/// <summary>Basic Clausewitz language construct.</summary>
 	public abstract class Construct

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Clausewitz
+namespace Tamar.Clausewitz
 {
 	/// <summary>
 	/// Logs messages during operation time for the Clausewitz interpreter. Note that

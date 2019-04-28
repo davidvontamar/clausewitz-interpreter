@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Clausewitz.Constructs;
-using Clausewitz.IO;
-using Directory = Clausewitz.IO.Directory;
-using File = Clausewitz.IO.File;
+using Tamar.Clausewitz.Constructs;
+using Tamar.Clausewitz.IO;
+using Directory = Tamar.Clausewitz.IO.Directory;
+using File = Tamar.Clausewitz.IO.File;
 
-namespace Clausewitz
+// ReSharper disable UnusedMember.Global
+
+namespace Tamar.Clausewitz
 {
 	/// <summary>The Clausewitz interpreter.</summary>
 	public static class Interpreter
@@ -19,11 +21,10 @@ namespace Clausewitz
 		public static Directory ReadDirectory(string address)
 		{
 			// This checks whether the address is local or full:
-			if (!address.IsFullAddress())
-				address = Environment.CurrentDirectory + '\\' + address;
+			address = address.ToFullyQualifiedAddress();
 
 			// Interpret all files and directories found within this directory:
-			var directory = address.DefineParents().NewDirectory(Path.GetFileNameWithoutExtension(address));
+			var directory = address.DefineParents().NewDirectory(Path.GetFileName(address));
 
 			// If doesn't exist, notify an error.
 			if (!System.IO.Directory.Exists(address))
@@ -43,8 +44,7 @@ namespace Clausewitz
 		public static File ReadFile(string address)
 		{
 			// This checks whether the address is local or full:
-			if (!address.IsFullAddress())
-				address = Environment.CurrentDirectory + Path.DirectorySeparatorChar + address;
+			address = address.ToFullyQualifiedAddress();
 
 			// Read the file:
 			var file = address.DefineParents().NewFile(Path.GetFileName(address));
@@ -94,7 +94,7 @@ namespace Clausewitz
 			// The actual text data, character by character.
 			var data = file.ReadText();
 
-			// The current token so far recoreded since the last token-breaking character.
+			// The current token so far recorded since the last token-breaking character.
 			var token = string.Empty;
 
 			// All tokenized tokens within this file so far.
@@ -372,8 +372,10 @@ namespace Clausewitz
 							scope = scope.Parent;
 						}
 						else
-							throw new SyntaxException("Missing an openning pair '{' for a clause scope", file, line,
+						{
+							throw new SyntaxException("Missing an opening pair '{' for a clause scope", file, line,
 								token);
+						}
 
 						break;
 					}
@@ -406,7 +408,7 @@ namespace Clausewitz
 						// If the comment comes at the same line with another construct, then it will be associated to that construct.
 						// If the comment takes a whole line then it will be stacked and associated with the next construct when it is created.
 						// If there was an empty line after the comment at the beginning of the file, then it will be associated with the file itself.
-						// Comments are responsbile for pragmas as well when utilizing square brackets.
+						// Comments are responsible for pragmas as well when utilizing square brackets.
 						var lineOfPrevToken = index > 0 ?
 							tokens[index - 1].line :
 							-1;
@@ -454,8 +456,10 @@ namespace Clausewitz
 
 			// Missing closing clause pair for scopes above the file level:
 			if (scope != file)
+			{
 				throw new SyntaxException("Missing a closing pair '}' for a clause scope.", file, tokens.Last().line,
 					tokens.Last().token);
+			}
 
 			// Associate end-comments (of the file):
 			AssociateComments(scope, true);
@@ -468,6 +472,7 @@ namespace Clausewitz
 					return;
 
 				// Associate with last construct if parameter is null.
+				// ReSharper disable once ConvertIfStatementToSwitchStatement
 				if ((construct == null) && (scope.Members.Count == 0))
 					return;
 				if (construct == null)
@@ -582,14 +587,14 @@ namespace Clausewitz
 		/// Thrown when syntax-related errors occur during interpretation time which result
 		/// in a broken & meaningless interpretation.
 		/// </summary>
-		public class SyntaxException : Exception
+		public class SyntaxException: Exception
 		{
 			/// <summary>Primary constructor.</summary>
 			/// <param name="message">Message.</param>
 			/// <param name="file">The file where the exception occurred.</param>
 			/// <param name="line">The line at which the exception occurred.</param>
 			/// <param name="token">The token responsible for the exception.</param>
-			internal SyntaxException(string message, File file, int line, string token) : base(message)
+			internal SyntaxException(string message, File file, int line, string token): base(message)
 			{
 				File = file;
 				Line = line;
@@ -601,10 +606,8 @@ namespace Clausewitz
 			{
 				get
 				{
-					return string.Format("Token: '{0}'\nLine: {1}\nFile: {2}",
-						Token,
-						Line,
-						File.Address.Remove(0, Environment.CurrentDirectory.Length));
+					return
+						$"Token: '{Token}'\nLine: {Line}\nFile: {File.Address.Remove(0, Environment.CurrentDirectory.Length)}";
 				}
 			}
 

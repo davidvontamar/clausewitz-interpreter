@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Clausewitz.Constructs
+namespace Tamar.Clausewitz.Constructs
 {
 	/// <summary>
 	/// Extension class for all language constructs.

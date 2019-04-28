@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Clausewitz.Constructs
+namespace Tamar.Clausewitz.Constructs
 {
 	/// <summary>
 	/// Every Clausewitz construct may have pragmas within the associated comments.
