@@ -105,8 +105,22 @@ namespace Tamar.Clausewitz.IO
 		/// <param name="address">Relative or fully qualified path.</param>
 		internal static string ToFullyQualifiedAddress(this string address)
 		{
-			// Replace Windows forward slashes with platform specific separators.
-			address = address.Replace('\\', Path.DirectorySeparatorChar);
+			// Replace slashes with platform specific separators.
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+				address = address.Replace('\\', Path.DirectorySeparatorChar);
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				address = address.Replace('/', Path.DirectorySeparatorChar);
+			else
+			{
+				address = address.Replace('/', Path.DirectorySeparatorChar);
+				address = address.Replace('\\', Path.DirectorySeparatorChar);
+			}
+
+			// Replace pairs of separators with single ones:
+			var separatorPair = string.Empty + Path.DirectorySeparatorChar + Path.DirectorySeparatorChar;
+			while (address.Contains(separatorPair))
+				address = address.Replace(separatorPair,
+					string.Empty + Path.DirectorySeparatorChar);
 
 			// This checks whether the address is local or full:
 			if (!address.IsFullAddress())
