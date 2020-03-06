@@ -12,9 +12,9 @@ This interpreter uses an abstract data tree structure when tokenizing the Clause
 
 **A prettyprint of an interpreted clausewitz file:**
 
-Input: **[input.txt](Clausewitz%20CLI%2FTest%2Finput.txt)**
+Input: **[input.txt](Clausewitz.CLI%2FTest%2Finput.txt)**
 
-Output: **[output.txt](Clausewitz%20CLI%2FTest%2Foutput.txt)**
+Output: **[output.txt](Clausewitz.CLI%2FTest%2Foutput.txt)**
 
 ![Screenshot of a prettyprint output of a typical Clausewitz file](images/prettyprint.png)
 
