@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <RootNamespace>Tamar.Clausewitz</RootNamespace>
+        <PackageId>Tamar.Clausewitz</PackageId>
+        <Title>Tamar.Clausewitz</Title>
+        <Authors>David von Tamar</Authors>
+        <Copyright>2023 David von Tamar, LGPLv3</Copyright>
+        <PackageVersion>0.2.0</PackageVersion>
+        <PackageProjectUrl>https://github.com/david-tamar/clausewitz.net</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/david-tamar/clausewitz.net/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/david-tamar/clausewitz.net</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>clausewitz, interpreter</PackageTags>
+        <AssemblyName>Tamar.Clausewitz</AssemblyName>
+        <Company>David von Tamar</Company>
+        <LangVersion>default</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DocumentationFile>bin\Release\netcoreapp2.0\Clausewitz interpreter.xml</DocumentationFile>
+    </PropertyGroup>
+</Project>
