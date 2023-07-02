@@ -4,7 +4,7 @@ using System.Linq;
 using Tamar.ANSITerm;
 using Tamar.Clausewitz.Constructs;
 using Directory = Tamar.Clausewitz.IO.Directory;
-using File = Tamar.Clausewitz.IO.File;
+using FileScope = Tamar.Clausewitz.IO.FileScope;
 
 namespace Tamar.Clausewitz.CLI
 {
@@ -18,7 +18,7 @@ namespace Tamar.Clausewitz.CLI
 		/// <summary>Main entry point.</summary>
 		public static void Main()
 		{
-			Console.WriteLine("Welcome to Clausewitz interpreter for .NET!\n© 2018-2019 David Tamar, LGPLv3.0");
+			Console.WriteLine("A .NET Interpreter for Clausewitz Engine.\nWritten by David von Tamar, LGPLv3");
 			Log.MessageSent += LogMessage;
 			Console.CursorVisible = true;
 			var input = Interpreter.ReadFile(@"Test\input.txt");
@@ -28,7 +28,7 @@ namespace Tamar.Clausewitz.CLI
 				input.Name = "output.txt";
 				input.Write();
 			}
-			Log.Send("Operation finished, press any key to exit.");
+			Log.Send("Press any key to exit.");
 			Console.ReadKey();
 		}
 
@@ -52,7 +52,7 @@ namespace Tamar.Clausewitz.CLI
 				// Inside a scope/file:
 				case Construct construct:
 				{
-					if (construct is File file)
+					if (construct is FileScope file)
 					{
 						var parent = file.Parent;
 						if (parent.Explorables.Last() == file)
@@ -156,7 +156,7 @@ namespace Tamar.Clausewitz.CLI
 					Console.WriteLine(binding.Value, TokenFore, TokenBack);
 					break;
 				case Scope scope:
-					if (scope is File)
+					if (scope is FileScope)
 						Console.WriteLine(scope.Name, FileFore, FileBack);
 					else if (!string.IsNullOrWhiteSpace(scope.Name))
 						Console.WriteLine(scope.Name, ScopeFore, ScopeBack);

@@ -3,9 +3,12 @@
 
 # Yet another one.
 
+#tricky_comment = {
+#}
+
 # Not file comment.
 #[sort all]
-Named_scope = {
+named_scope = {
 	#[unindent]
 	OR = {
 		B
@@ -29,7 +32,7 @@ Named_scope = {
 	1 = 2
 	"English"
 	#[unindent all]
-	RGB_color = {
+	colors = {
 	    { 255 255 255 }
 	    # Nameless
         {
