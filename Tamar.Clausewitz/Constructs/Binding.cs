@@ -1,25 +1,36 @@
-﻿namespace Tamar.Clausewitz.Constructs;
+﻿using System;
+
+namespace Tamar.Clausewitz.Constructs;
 
 /// <summary>
-///     Any statement which includes the assignment operator '=' in Clausewitz.
-///     Including most commands, conditions
-///     and triggers which come in a single line.
+/// Any statement which includes the assignment operator '=' in the Clausewitz language, except clauses.
+/// Including most commands, conditions and triggers which come in a single line.
 /// </summary>
 public class Binding : Construct
 {
-	/// <summary>Left side.</summary>
-	public string Name;
+    public Binding(Clause parent, string name, string value) : base(parent)
+    {
+        if (!Interpreter.IsValidToken(name))
+            throw new Exception("Invalid name.");
+        if (!Interpreter.IsValidToken(value))
+            throw new Exception("Invalid value.");
+        Name = name;
+        Value = value;
+    }
 
-	/// <summary>Right side.</summary>
-	public string Value;
+    /// <summary>
+    /// Special base constructor for typed bindings.
+    /// </summary>
+    protected Binding(Clause parent, string name) : base(parent)
+    {
+        if (!Interpreter.IsValidToken(name))
+            throw new Exception("Invalid name.");
+        Name = name;
+    }
 
-	/// <summary>Primary constructor.</summary>
-	/// <param name="parent">Parent scope.</param>
-	/// <param name="name">Left side.</param>
-	/// <param name="value">Right side.</param>
-	internal Binding(Scope parent, string name, string value) : base(parent)
-	{
-		Name = name;
-		Value = value;
-	}
+    /// <summary>Left side.</summary>
+    public string Name;
+
+    /// <summary>Right side.</summary>
+    public string Value;
 }

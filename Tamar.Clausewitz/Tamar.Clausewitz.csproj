@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <RootNamespace>Tamar.Clausewitz</RootNamespace>
         <PackageId>Tamar.Clausewitz</PackageId>
         <Title>Tamar.Clausewitz</Title>
         <Authors>David von Tamar</Authors>
-        <Copyright>2023 David von Tamar, LGPLv3</Copyright>
-        <PackageVersion>0.2.0</PackageVersion>
-        <PackageProjectUrl>https://github.com/david-tamar/clausewitz.net</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/david-tamar/clausewitz.net/blob/master/LICENSE</PackageLicenseUrl>
-        <RepositoryUrl>https://github.com/david-tamar/clausewitz.net</RepositoryUrl>
+        <Copyright>David von Tamar, LGPLv3</Copyright>
+        <PackageVersion></PackageVersion>
+        <PackageProjectUrl>https://github.com/david-von-tamar/clausewitz-interpreter</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/david-von-tamar/clausewitz-interpreter/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/david-von-tamar/clausewitz-interpreter</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>clausewitz, interpreter</PackageTags>
         <AssemblyName>Tamar.Clausewitz</AssemblyName>

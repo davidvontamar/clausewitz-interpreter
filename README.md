@@ -1,18 +1,28 @@
-# A .NET Interpreter for Clausewitz Engine
-## Introduction
-This is a .NET interpreter for Clausewitz's scripting language. The interpreter helps with reading, writing, editing and querying the contents of standard Clausewitz files made by Paradox Interactive for their various soft-coded games. 
+# A .NET Interpreter for the Clausewitz Language
+This is a modest interpreter for the Clausewitz scripting language written in C#.
+The interpreter uses an abstract data tree structure when tokenizing the Clausewitz files, and offers pragma commands for sorting and indenting files.
+It also enforces comment association to prevent their loss.
 
-This interpreter uses an abstract data tree structure when tokenizing the Clausewitz files, and offers pragma commands for sorting and indenting files, and enforces comment association to prevent their loss. With these features, it may be used as a cleanup tool for messy projects that were already made around Clausewitz files.
+## Example Usage
+Usage is straightforward. You can interpret a Clausewitz file as follows:
+```csharp
+var clause = Interpreter.InterpretText(text);
+```
+The interpreter recognizes the following constructs: `Clause`, `Binding`, and `Token`.
+* `Clause` objects represent the abstract data tree of an interpreted Clausewitz block.
+* `Binding` objects represent key-value pairs within a Clausewitz block.
+* `Token` objects represent the smallest unit of meaning in a Clausewitz script, such as RGB values in a Clausewitz color block.
 
-## Dependencies
-1. Currently set to .NET 6.0.
-2. The CLI requires my **[ANSITerm](https://github.com/david-tamar/ansi-term)**  library<sup>[1](#WhyANSITerm)</sup>. If your IDE does not resolve this dependency from Nuget, then you may either git clone that library and attach it to this solution, or you may download the package `Tamar.ANSITerm` itself from Nuget's website.
+You can then translate the abstract data tree back to Clausewitz format:
+```csharp
+var text = Interpreter.TranslateClause(clause);
+```
 
-## I/O results
-
-Input: **[input.txt](Tamar.Clausewitz.CLI%2FTest%2Finput.txt)**
-
-Output: **[output.txt](Tamar.Clausewitz.CLI%2FTest%2Foutput.txt)**
-
-## Notes:
-<a name="WhyANSITerm">1</a>: I created my own ANSI-Compliant System.Console implementation because .NET's default System.Console could not display 24-bit colors properly on Linux terminals which support ANSI escape codes.
+## Pragma Commands
+The interpreter supports several pragma commands to manipulate Clausewitz files:
+* `# [sort]`: Sorts the constructs within a clause alphabetically.
+* `# [sort all]`: Sorts all constructs within a clause and its sub-clauses alphabetically.
+* `# [indent]`: Indents the constructs within a clause.
+* `# [indent all]`: Indents all constructs within a clause and its sub-clauses.
+* `# [unindent]`: Removes indentation from the constructs within a clause.
+* `# [unindent all]`: Removes indentation from all constructs within a clause and its sub-clauses.

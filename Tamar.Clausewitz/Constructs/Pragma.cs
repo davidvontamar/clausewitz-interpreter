@@ -3,45 +3,37 @@
 namespace Tamar.Clausewitz.Constructs;
 
 /// <summary>
-///     Every Clausewitz construct may have pragmas within the associated comments.
-///     Each pragma includes a set of
-///     keywords.
+/// Every Clausewitz construct may have pragmas within the associated comments.
+/// Each pragma includes a set of options.
 /// </summary>
 public struct Pragma
 {
-	/// <summary>User-friendly constructor.</summary>
-	/// <param name="keywords">Keywords.</param>
-	public Pragma(params string[] keywords)
-	{
-		Keywords = new HashSet<string>(keywords);
-	}
+    /// <summary>User-friendly constructor.</summary>
+    public Pragma(params string[] options)
+    {
+        Options = new HashSet<string>(options);
+    }
 
-	/// <summary>Primary constructor.</summary>
-	/// <param name="keywords">Keywords.</param>
-	public Pragma(HashSet<string> keywords)
-	{
-		Keywords = keywords;
-	}
+    /// <summary>Primary constructor.</summary>
+    public Pragma(HashSet<string> options)
+    {
+        Options = options;
+    }
 
-	/// <summary>Checks if a pragma has all of the specified keywords.</summary>
-	/// <param name="keywords">Keywords.</param>
-	/// <returns>Boolean.</returns>
-	public bool Contains(IEnumerable<string> keywords)
-	{
-		return Keywords.IsSupersetOf(keywords.FormatKeywords());
-	}
+    /// <summary>
+    /// Options are separated by spaces within each pragma, and their order does not matter.
+    /// </summary>
+    public readonly HashSet<string> Options;
 
-	/// <summary>Checks if a pragma has all of the specified keywords.</summary>
-	/// <param name="keywords">Keywords.</param>
-	/// <returns>Boolean.</returns>
-	public bool Contains(params string[] keywords)
-	{
-		return Keywords.IsSupersetOf(keywords.FormatKeywords());
-	}
+    /// <summary>Returns true if a pragma has all of the specified options.</summary>
+    public bool ContainsOptions(IEnumerable<string> options)
+    {
+        return Options.IsSupersetOf(options.FormatKeywords());
+    }
 
-	/// <summary>
-	///     Keywords are separated by spaces within each pragma, and their order does not
-	///     matter.
-	/// </summary>
-	public readonly HashSet<string> Keywords;
+    /// <summary>Returns true if a pragma has all of the specified options.</summary>
+    public bool ContainsOptions(params string[] options)
+    {
+        return Options.IsSupersetOf(options.FormatKeywords());
+    }
 }

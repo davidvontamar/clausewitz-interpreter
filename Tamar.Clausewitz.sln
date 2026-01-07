@@ -1,10 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tamar.Clausewitz.CLI", "Tamar.Clausewitz.CLI\Tamar.Clausewitz.CLI.csproj", "{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}"
-EndProject
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tamar.Clausewitz", "Tamar.Clausewitz\Tamar.Clausewitz.csproj", "{8D89E5C6-35D0-44D9-AAB8-495C137B876A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tamar.ANSITerm", "..\ansi-term\Tamar.ANSITerm\Tamar.ANSITerm.csproj", "{792A9B03-ED7F-46EC-98F1-CE1B270C82A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tamar.Clausewitz.Test", "Tamar.Clausewitz.Test\Tamar.Clausewitz.Test.csproj", "{B4F428B0-CDDC-6FCF-C83A-AD77F8410F39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,17 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C7B4026-C67D-4B9B-97E2-DBB270FDBE20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D89E5C6-35D0-44D9-AAB8-495C137B876A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8D89E5C6-35D0-44D9-AAB8-495C137B876A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D89E5C6-35D0-44D9-AAB8-495C137B876A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D89E5C6-35D0-44D9-AAB8-495C137B876A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{792A9B03-ED7F-46EC-98F1-CE1B270C82A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{792A9B03-ED7F-46EC-98F1-CE1B270C82A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{792A9B03-ED7F-46EC-98F1-CE1B270C82A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{792A9B03-ED7F-46EC-98F1-CE1B270C82A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4F428B0-CDDC-6FCF-C83A-AD77F8410F39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4F428B0-CDDC-6FCF-C83A-AD77F8410F39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4F428B0-CDDC-6FCF-C83A-AD77F8410F39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4F428B0-CDDC-6FCF-C83A-AD77F8410F39}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DB247C10-80E4-4551-8DA2-59185F897939}
 	EndGlobalSection
 EndGlobal

@@ -3,7 +3,7 @@
 
 # Yet another one.
 
-#tricky_comment = {
+#code_comment = {
 #}
 
 # Not file comment.
@@ -29,7 +29,7 @@ named_scope = {
 # Unnamed scope
 {
 	text = "\"escaped quote"
-	1 = 2
+	123.456 = 123.456
 	"English"
 	#[unindent all]
 	colors = {
