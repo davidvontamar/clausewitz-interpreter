@@ -199,14 +199,14 @@ public static class Interpreter
                         else if (token.Comments.Count > 0)
                             preceding = tabs;
                         else if (root.Constructs.First() != token)
-                            if (!(root.Constructs[root.Constructs.IndexOf(token) - 1] is Token))
+                            if (root.Constructs[root.Constructs.IndexOf(token) - 1] is not Token)
                                 preceding = tabs;
 
                         // Following characters:
                         if (root.Constructs.Last() != token)
                         {
                             var next = root.Constructs[root.Constructs.IndexOf(token) + 1];
-                            if (!(next is Token))
+                            if (next is not Token)
                                 following = newline;
                             if (next.Comments.Count > 0)
                                 following = newline;
@@ -280,13 +280,13 @@ public static class Interpreter
                 if (binding == "=")
                 {
                     if (IsValidToken(name))
-                        currentClause = currentClause.AddNewClause(name);
+                        currentClause = currentClause.AddClause(name);
                     else
                         throw new SyntaxException("Invalid name in clause binding.", currentClause, lineNumber, token);
                 }
                 else
                 {
-                    currentClause = currentClause.AddNewClause();
+                    currentClause = currentClause.AddClause();
                 }
 
                 AssociateComments(currentClause);
@@ -326,7 +326,7 @@ public static class Interpreter
                     throw new SyntaxException("Invalid name in binding.", currentClause, lineNumber, token);
                 if (!IsValidToken(value))
                     throw new SyntaxException("Invalid value in binding.", currentClause, lineNumber, token);
-                currentClause.AddNewBinding(Unquote(name), Unquote(value));
+                currentClause.AddBinding(Unquote(name), Unquote(value));
                 AssociateComments();
             }
             // Comment/pragma:
@@ -367,7 +367,7 @@ public static class Interpreter
                 {
                     if (IsValidToken(token))
                     {
-                        currentClause.AddNewToken(Unquote(token));
+                        currentClause.AddToken(Unquote(token));
                         AssociateComments();
                     }
                     else

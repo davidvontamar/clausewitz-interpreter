@@ -23,7 +23,7 @@ public static class Program
     /// <summary>Main entry point.</summary>
     public static void Main()
     {
-        Console.WriteLine("This is an interpreter for the Clausewitz language written by David von Tamar, released under the LGPL-3.0 license.");
+        Console.WriteLine("This is an interpreter for the Clausewitz language, written by David von Tamar and released under the LGPL-3.0 license.");
         var path = "TestFiles/Example.txt";
         var text = File.ReadAllText(path);
         var root = Interpreter.InterpretText(text);
@@ -51,7 +51,7 @@ public static class Program
         var tree = string.Empty;
         var isLast = false;
         var parent = current.Parent;
-        if (parent.Members.Last() == current)
+        if (parent.Constructs.Last() == current)
             isLast = true;
         tree += ConcatTree(root, parent);
         switch (alignment)
@@ -132,11 +132,11 @@ public static class Program
                 else
                 {
                     Console.ForegroundColor = TreeForegroundColor;
-                    Console.Write(clause.Members.Count > 0 ? "┐" : "─");
+                    Console.Write(clause.Constructs.Count > 0 ? "┐" : "─");
                     Console.ResetColor();
                     Console.WriteLine();
                 }
-                foreach (var member in clause.Members)
+                foreach (var member in clause.Constructs)
                     PrettyPrint(root, member);
                 foreach (var comment in clause.EndComments)
                 {

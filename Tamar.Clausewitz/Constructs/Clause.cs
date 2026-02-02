@@ -10,7 +10,7 @@ public class Clause : Construct
     {
         if (name != null)
             Name = name;
-        Members = new ReadOnlyCollection<Construct>(Constructs);
+        Constructs = new ReadOnlyCollection<Construct>(constructs);
         Bindings = new ReadOnlyCollection<Binding>(bindings);
         Clauses = new ReadOnlyCollection<Clause>(clauses);
         Tokens = new ReadOnlyCollection<Token>(tokens);
@@ -23,13 +23,13 @@ public class Clause : Construct
     }
     public readonly ReadOnlyCollection<Binding> Bindings;
     public readonly List<string> EndComments = [];
-    public readonly ReadOnlyCollection<Construct> Members;
+    public readonly ReadOnlyCollection<Construct> Constructs;
     public readonly ReadOnlyCollection<Clause> Clauses;
     public readonly ReadOnlyCollection<Token> Tokens;
     /// <summary>
     /// All child constructs; for internal uses by the interpreter
     /// </summary>
-    internal readonly List<Construct> Constructs = [];
+    private readonly List<Construct> constructs = [];
     private readonly List<Binding> bindings = [];
     private readonly List<Clause> clauses = [];
     private readonly List<Token> tokens = [];
@@ -41,14 +41,14 @@ public class Clause : Construct
                 return true;
             if (Pragmas.ContainsOptions("unindent"))
                 return false;
-            if (IndentedParent(Parent))
+            if (IsIndentedParent(Parent))
                 return true;
-            if (UnindentedParent(Parent))
+            if (IsUnindentedParent(Parent))
                 return false;
-            if (AllTokens() && Constructs.Count > 20)
+            if (HasOnlyTokens() && constructs.Count > 20)
                 return false;
             return true;
-            bool IndentedParent(Clause parent)
+            bool IsIndentedParent(Clause parent)
             {
                 while (true)
                 {
@@ -59,7 +59,7 @@ public class Clause : Construct
                     parent = parent.Parent;
                 }
             }
-            bool UnindentedParent(Clause parent)
+            bool IsUnindentedParent(Clause parent)
             {
                 while (true)
                 {
@@ -70,9 +70,9 @@ public class Clause : Construct
                     parent = parent.Parent;
                 }
             }
-            bool AllTokens()
+            bool HasOnlyTokens()
             {
-                foreach (var member in Constructs)
+                foreach (var member in constructs)
                     if (member is not Token)
                         return false;
                 return true;
@@ -83,9 +83,12 @@ public class Clause : Construct
     {
         get
         {
-            return SortedParent(Parent) || Pragmas.ContainsOptions("sort");
+            return HasSortedParent(Parent) || Pragmas.ContainsOptions("sort");
 
-            bool SortedParent(Clause parent)
+            /// <summary>
+            /// Checks if any parent clause has sorting enabled.
+            /// </summary>
+            static bool HasSortedParent(Clause parent)
             {
                 while (true)
                 {
@@ -109,27 +112,27 @@ public class Clause : Construct
     }
     public void CopyAllConstructsFrom(Clause source)
     {
-        foreach (var member in source.Constructs)
+        foreach (var member in source.constructs)
             if (member is Binding binding)
             {
-                var newBinding = AddNewBinding(binding.Name, binding.Value);
+                var newBinding = AddBinding(binding.Name, binding.Value);
                 newBinding.Comments.AddRange(binding.Comments);
             }
             else if (member is Clause scope)
             {
-                var newScope = AddNewClause(scope.Name);
+                var newScope = AddClause(scope.Name);
                 newScope.CopyAllConstructsFrom(scope);
                 newScope.Comments.AddRange(scope.Comments);
             }
             else if (member is Token token)
             {
-                var newToken = AddNewToken(token.Value);
+                var newToken = AddToken(token.Value);
                 newToken.Comments.AddRange(token.Comments);
             }
     }
     public Binding FindBinding(string name)
     {
-        foreach (var member in Constructs)
+        foreach (var member in constructs)
             if (member is Binding binding && binding.Name == name)
                 return binding;
         return null;
@@ -168,35 +171,56 @@ public class Clause : Construct
     }
     public bool HasToken(string value)
     {
-        foreach (var member in Constructs)
+        foreach (var member in constructs)
             if (member is Token token && token.Value == value)
                 return true;
         return false;
     }
-    public Binding AddNewBinding(string name, string value)
+    public Binding AddBinding(string name, string value)
     {
         var binding = new Binding(this, name, value);
         bindings.Add(binding);
-        Constructs.Add(binding);
+        constructs.Add(binding);
         return binding;
     }
-    public Clause AddNewClause(string name = null)
+    public Clause AddClause(string name = null)
     {
         var scope = new Clause(this, name);
         clauses.Add(scope);
-        Constructs.Add(scope);
+        constructs.Add(scope);
         return scope;
     }
-    public Token AddNewToken(string value)
+    public Token AddToken(string value)
     {
         var token = new Token(this, value);
         tokens.Add(token);
-        Constructs.Add(token);
+        constructs.Add(token);
         return token;
+    }
+    public void RemoveBinding(Binding binding)
+    {
+        if (binding.Parent != this)
+            throw new ArgumentException("The binding to remove is not a child of this clause.", nameof(binding));
+        bindings.Remove(binding);
+        constructs.Remove(binding);
+    }
+    public void RemoveClause(Clause clause)
+    {
+        if (clause.Parent != this)
+            throw new ArgumentException("The clause to remove is not a child of this clause.", nameof(clause));
+        clauses.Remove(clause);
+        constructs.Remove(clause);
+    }
+    public void RemoveToken(Token token)
+    {
+        if (token.Parent != this)
+            throw new ArgumentException("The token to remove is not a child of this clause.", nameof(token));
+        tokens.Remove(token);
+        constructs.Remove(token);
     }
     public void Sort()
     {
-        Constructs.Sort((first, second) =>
+        constructs.Sort((first, second) =>
         {
             var constructs = new[]
             {
