@@ -52,3 +52,59 @@ You can use them by placing them in comments within your Clausewitz files.
 * `# [indent all]`: Indents all constructs within a clause and its sub-clauses.
 * `# [unindent]`: Removes indentation from the constructs within a clause.
 * `# [unindent all]`: Removes indentation from all constructs within a clause and its sub-clauses.
+
+## Sample Clausewitz File
+Screenshot of `Example.txt` data tree:
+
+![Screenshot](screenshot.png)
+
+Contents of `Example.txt`:
+
+```
+# File comment.
+# Another file comment.
+
+# Yet another one.
+
+#code_comment = {
+#}
+
+# Not file comment.
+#[sort all]
+named_scope = {
+	#[unindent]
+	OR = {
+		B
+		# Comment
+		A C # Attached comment
+		# Inner end comment
+	}
+	# Penrose
+	{
+		# Say
+		Hi = {{{ I_like_stairs }} A = { B = { C }}}
+		{
+			# Lonely comment
+		}
+	}
+	# Outer end comment
+}
+# Unnamed scope
+{
+	text = "\"escaped quote"
+	123.456 = 123.456
+	"English"
+	#[unindent all]
+	colors = {
+	    { 255 255 255 }
+	    # Nameless
+        {
+            # Just a color
+            255 # R
+            255 # G
+            255 # B
+        }
+	}
+}
+# File end comments.
+```
