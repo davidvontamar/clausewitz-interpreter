@@ -3,6 +3,9 @@ This is a modest interpreter for the Clausewitz scripting language written in C#
 The interpreter uses an abstract data tree structure when tokenizing the Clausewitz files, and offers pragma commands for sorting and indenting files.
 It also enforces comment association to prevent their loss during translation.
 
+## Nuget Package
+The interpreter is available as [`Tamar.Clausewitz`](https://www.nuget.org/packages/Tamar.Clausewitz) on the Nuget Gallery.
+
 ## Example Usage
 Usage is straightforward. You can interpret a Clausewitz file as follows:
 ```csharp

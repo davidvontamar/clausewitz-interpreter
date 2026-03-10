@@ -5,18 +5,29 @@
         <PackageId>Tamar.Clausewitz</PackageId>
         <Title>Tamar.Clausewitz</Title>
         <Authors>David von Tamar</Authors>
-        <Copyright>David von Tamar, LGPLv3</Copyright>
+        <Copyright>David von Tamar</Copyright>
         <PackageVersion></PackageVersion>
-        <PackageProjectUrl>https://github.com/david-von-tamar/clausewitz-interpreter</PackageProjectUrl>
-        <PackageLicenseUrl>https://github.com/david-von-tamar/clausewitz-interpreter/blob/master/LICENSE</PackageLicenseUrl>
-        <RepositoryUrl>https://github.com/david-von-tamar/clausewitz-interpreter</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/davidvontamar/clausewitz-interpreter</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/davidvontamar/clausewitz-interpreter</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageTags>clausewitz, interpreter</PackageTags>
         <AssemblyName>Tamar.Clausewitz</AssemblyName>
-        <Company>David von Tamar</Company>
         <LangVersion>default</LangVersion>
+        <Version>0.4.0</Version>
+        <Description>A .NET Interpreter for the Clausewitz Language</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
+        <PackageReleaseNotes>Initial Nuget package release</PackageReleaseNotes>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <DocumentationFile>bin\Release\netcoreapp2.0\Clausewitz interpreter.xml</DocumentationFile>
-    </PropertyGroup>
+    <ItemGroup>
+      <None Include="..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+      <None Include="..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 </Project>
