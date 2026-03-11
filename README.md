@@ -30,8 +30,8 @@ You may search, add, and remove constructs within the abstract data tree. The `C
 * `FindClauseBreadthFirst(string name)`: Finds a clause by its name using breadth-first search.
 * `FindBinding(string name)`: Finds a binding by its name.
 * `HasToken(string value)`: Returns true if a token exists in this clause with the specified value.
-* `AddClause(string name = null)`: Adds a clause with the specified name (optional).
-* `AddBinding(string name, string value)`: Adds a binding with the specified name and value.
+* `AddClause(string name = null, Operators @operator = Operators.Equals)`: Adds a clause with the specified name (optional) and operator.
+* `AddBinding(string name, Operators @operator, string value)`: Adds a binding with the specified name, operator, and value.
 * `AddToken(string value)`: Adds the specified value as a token.
 * `RemoveClause(Clause clause)`: Removes the specified clause.
 * `RemoveBinding(Binding binding)`: Removes the specified binding.

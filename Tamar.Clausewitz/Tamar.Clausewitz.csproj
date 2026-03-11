@@ -10,14 +10,14 @@
         <PackageProjectUrl>https://github.com/davidvontamar/clausewitz-interpreter</PackageProjectUrl>
         <RepositoryUrl>https://github.com/davidvontamar/clausewitz-interpreter</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
-        <PackageTags>clausewitz, interpreter</PackageTags>
+        <PackageTags>clausewitz, interpreter, paradox</PackageTags>
         <AssemblyName>Tamar.Clausewitz</AssemblyName>
         <LangVersion>default</LangVersion>
-        <Version>0.4.0</Version>
+        <Version>0.5.1</Version>
         <Description>A .NET Interpreter for the Clausewitz Language</Description>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseExpression>LGPL-3.0-or-later</PackageLicenseExpression>
-        <PackageReleaseNotes>Initial Nuget package release</PackageReleaseNotes>
+        <PackageReleaseNotes>Documentation update and bugfix in the Clause object.</PackageReleaseNotes>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     </PropertyGroup>
     <ItemGroup>

@@ -127,7 +127,7 @@ public class Clause : Construct
             }
             else if (member is Clause scope)
             {
-                var newScope = AddClause(scope.Name);
+                var newScope = AddClause(scope.Name, scope.Operator);
                 newScope.CopyAllConstructsFrom(scope);
                 newScope.Comments.AddRange(scope.Comments);
             }
