@@ -8,12 +8,13 @@ namespace Tamar.Clausewitz.Constructs;
 /// </summary>
 public class Binding : Construct
 {
-    public Binding(Clause parent, string name, string value) : base(parent)
+    public Binding(Clause parent, string name, Operators @operator, string value) : base(parent)
     {
         if (!Interpreter.IsValidToken(name))
             throw new Exception("Invalid name.");
         if (!Interpreter.IsValidToken(value))
             throw new Exception("Invalid value.");
+        Operator = @operator;
         Name = name;
         Value = value;
     }
@@ -33,4 +34,9 @@ public class Binding : Construct
 
     /// <summary>Right side.</summary>
     public string Value;
+
+    public Operators Operator
+    {
+        get; private set;
+    }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Tamar.Clausewitz.Constructs;
@@ -34,6 +36,18 @@ public static class Program
         Console.WriteLine("Press any key to exit.");
         Console.ReadKey();
     }
+
+    internal readonly static ReadOnlyDictionary<string, Operators> TokenToOperator = new(new Dictionary<string, Operators>
+    {
+        ["="] = Operators.Equals,
+        ["!="] = Operators.NotEquals,
+        ["?="] = Operators.QuestionEquals,
+        [">"] = Operators.GreaterThan,
+        ["<"] = Operators.LessThan,
+        [">="] = Operators.GreaterThanOrEqual,
+        ["<="] = Operators.LessThanOrEqual
+    });
+    internal readonly static ReadOnlyDictionary<Operators, string> OperatorToToken = new(TokenToOperator.ToDictionary(kv => kv.Value, kv => kv.Key));
 
     /// <summary>Draws tree structure to the left.</summary>
     /// <param name="root">
@@ -104,7 +118,7 @@ public static class Program
                 Console.Write(binding.Name);
                 Console.ResetColor();
                 Console.ForegroundColor = BindingForegroundColor;
-                Console.Write(" = ", BindingForegroundColor);
+                Console.Write(" " + OperatorToToken[binding.Operator] + " ");
                 Console.ResetColor();
                 Console.ForegroundColor = TokenForegroundColor;
                 Console.BackgroundColor = TokenBackgroundColor;
@@ -127,6 +141,12 @@ public static class Program
                     Console.BackgroundColor = ClauseBackgroundColor;
                     Console.Write(clause.Name);
                     Console.ResetColor();
+                    if (clause.Operator != Operators.Equals)
+                    {
+                        Console.ForegroundColor = BindingForegroundColor;
+                        Console.Write(" " + OperatorToToken[clause.Operator]);
+                        Console.ResetColor();
+                    }
                     Console.WriteLine();
                 }
                 else

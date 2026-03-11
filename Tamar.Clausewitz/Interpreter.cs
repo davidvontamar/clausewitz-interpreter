@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Tamar.Clausewitz.Constructs;
@@ -9,7 +10,18 @@ namespace Tamar.Clausewitz;
 /// <summary>The Clausewitz interpreter</summary>
 public static class Interpreter
 {
-    internal const string ValuePattern = @"[a-zA-Z0-9_.:""]+";
+    internal const string ValuePattern = @"[a-zA-Z0-9_.:""-]+";
+    internal readonly static ReadOnlyDictionary<string, Operators> TokenToOperator = new(new Dictionary<string, Operators>
+    {
+        ["="] = Operators.Equals,
+        ["!="] = Operators.NotEquals,
+        ["?="] = Operators.QuestionEquals,
+        [">"] = Operators.GreaterThan,
+        ["<"] = Operators.LessThan,
+        [">="] = Operators.GreaterThanOrEqual,
+        ["<="] = Operators.LessThanOrEqual
+    });
+    internal readonly static ReadOnlyDictionary<Operators, string> OperatorToToken = new(TokenToOperator.ToDictionary(kv => kv.Value, kv => kv.Key));
 
     internal static bool IsValidToken(string token)
     {
@@ -20,6 +32,9 @@ public static class Interpreter
     {
         // The current token so far recorded since the last token-breaking character.
         var currentToken = string.Empty;
+
+        // The current delimiter token if the last character was a delimiter, otherwise empty.
+        var delimiterToken = string.Empty;
 
         // All tokenized tokens within this file so far.
         var tokens = new List<(string token, int line)>();
@@ -36,12 +51,14 @@ public static class Interpreter
         // Counts each newline.
         var lineNumber = 1;
 
-        // Keeps track of the previous char.
-        var previousChar = '\0';
-
         // Tokenization loop:
-        foreach (var @char in text)
+        for (int i = 0; i < text.Length; i++)
         {
+            // All current information:
+            char previousChar = i > 0 ? text[i - 1] : '\0';
+            char currentChar = text[i];
+            char nextChar = i + 1 < text.Length ? text[i + 1] : '\0';
+
             // Count a new line.
             if (newline)
             {
@@ -50,16 +67,15 @@ public static class Interpreter
             }
 
             // Keep tokenizing a string unless a switching delimiter comes outside escape.
-            if (isString && !(@char == '"' && previousChar != '\\'))
+            if (isString && !(currentChar == '"' && previousChar != '\\'))
                 goto concat;
 
             // Keep tokenizing a comment unless a switching delimiter comes.
-            if (isComment && !(@char == '\r' || @char == '\n'))
+            if (isComment && !(currentChar == '\r' || currentChar == '\n'))
                 goto concat;
 
             // Standard tokenizer:
-            var charToken = '\0';
-            switch (@char)
+            switch (currentChar)
             {
                 // Newline: (also comment delimiter)
                 case '\r':
@@ -76,7 +92,7 @@ public static class Interpreter
                     }
 
                     // Cross-platform compatibility for newlines:
-                    if (previousChar == '\r' && @char == '\n')
+                    if (previousChar == '\r' && currentChar == '\n')
                         break;
                     newline = true;
                     break;
@@ -89,20 +105,49 @@ public static class Interpreter
                 // String delimiter:
                 case '"':
                     isString = !isString;
-                    currentToken += @char;
+                    currentToken += currentChar;
                     break;
 
                 // Comment delimiter:
                 case '#':
                     isComment = true;
-                    charToken = @char;
+                    delimiterToken = new string(currentChar, 1);
                     break;
 
-                // Clause clauses & binding operator:
-                case '}':
+                // Clause brackets:
                 case '{':
+                case '}':
+                    delimiterToken = new string(currentChar, 1);
+                    break;
+
+                // Binding operator characters:
                 case '=':
-                    charToken = @char;
+                case '!':
+                case '>':
+                case '<':
+                case '?':
+                    switch (nextChar)
+                    {
+                        case '=':
+                            if (currentChar == '=')
+                            {
+                                throw new SyntaxException("Unexpected token '=='.", null, lineNumber, "==");
+                            }
+                            delimiterToken = new string([currentChar, nextChar]);
+                            i++;
+                            break;
+                        default:
+                            if (currentChar == '!')
+                            {
+                                throw new SyntaxException("Unexpected token '!'.", null, lineNumber, "!");
+                            }
+                            else if (currentChar == '?')
+                            {
+                                throw new SyntaxException("Unexpected token '?'.", null, lineNumber, "?");
+                            }
+                            delimiterToken = new string(currentChar, 1);
+                            break;
+                    }
                     break;
 
                 // Any other character:
@@ -110,22 +155,24 @@ public static class Interpreter
                     goto concat;
             }
 
-            // Add new tokens to the list:
+            // Add new complete tokens to the list:
             if (currentToken.Length > 0 && !isString)
             {
                 tokens.Add((currentToken, lineNumber));
                 currentToken = string.Empty;
             }
 
-            if (charToken != '\0')
-                tokens.Add((new string(charToken, 1), lineNumber));
-            previousChar = @char;
+            // Add new delimiter tokens to the list:
+            if (delimiterToken.Length > 0)
+            {
+                tokens.Add((delimiterToken, lineNumber));
+                delimiterToken = string.Empty;
+            }
             continue;
 
-        // Concat characters to unfinished numbers/words/comments/strings.
+            // Concat characters to unfinished numbers/words/comments/strings.
         concat:
-            currentToken += @char;
-            previousChar = @char;
+            currentToken += currentChar;
         }
 
         // EOF & last token:
@@ -133,6 +180,7 @@ public static class Interpreter
             tokens.Add((currentToken, lineNumber));
         return tokens;
     }
+
     /// <summary>
     /// Translate a Clause structure back into Clausewitz script.
     /// </summary>
@@ -158,7 +206,6 @@ public static class Interpreter
         {
             foreach (var comment in construct.Comments)
                 data.Add(tabs + "# " + comment + newline);
-
             // Translate the actual type:
             switch (construct)
             {
@@ -166,7 +213,7 @@ public static class Interpreter
                     if (string.IsNullOrWhiteSpace(clause.Name))
                         data.Add(tabs + '{');
                     else
-                        data.Add(tabs + EnquoteIfRequired(clause.Name) + " = {");
+                        data.Add(tabs + EnquoteIfRequired(clause.Name) + " " + OperatorToToken[clause.Operator] + " {");
                     if (clause.Constructs.Count > 0)
                     {
                         data.Add(newline + TranslateClause(clause));
@@ -181,7 +228,7 @@ public static class Interpreter
 
                     break;
                 case Binding binding:
-                    data.Add(tabs + EnquoteIfRequired(binding.Name) + " = " + EnquoteIfRequired(binding.Value) + newline);
+                    data.Add(tabs + EnquoteIfRequired(binding.Name) + " " + OperatorToToken[binding.Operator] + " " + EnquoteIfRequired(binding.Value) + newline);
                     break;
                 case Token token:
                     if (root.IsIndented)
@@ -274,13 +321,12 @@ public static class Interpreter
             {
                 // Participants:
                 var name = prevPrevToken;
-                var binding = prevToken;
 
                 // Syntax check:
-                if (binding == "=")
+                if (TokenToOperator.ContainsKey(prevToken))
                 {
                     if (IsValidToken(name))
-                        currentClause = currentClause.AddClause(name);
+                        currentClause = currentClause.AddClause(name, TokenToOperator[prevToken]);
                     else
                         throw new SyntaxException("Invalid name in clause binding.", currentClause, lineNumber, token);
                 }
@@ -310,23 +356,25 @@ public static class Interpreter
                     currentClause = currentClause.Parent;
                 }
             }
-            // Binding operator:
-            else if (token == "=" && prevToken != "#")
+            // Binding operators:
+            else if (prevToken != "#" && TokenToOperator.ContainsKey(token))
             {
+                // Skip clause binding: (handled in the "{" case, otherwise will claim as a syntax error.)
+                if (nextToken == "{")
+                    continue;
+
                 // Participants:
                 var name = prevToken;
                 var value = nextToken;
-
-                // Skip clause binding: (handled in the "{" case, otherwise will claim as a syntax error.)
-                if (value == "{")
-                    continue;
 
                 // Syntax check:
                 if (!IsValidToken(name))
                     throw new SyntaxException("Invalid name in binding.", currentClause, lineNumber, token);
                 if (!IsValidToken(value))
                     throw new SyntaxException("Invalid value in binding.", currentClause, lineNumber, token);
-                currentClause.AddBinding(Unquote(name), Unquote(value));
+
+                currentClause.AddBinding(Unquote(name), TokenToOperator[token], Unquote(value));
+
                 AssociateComments();
             }
             // Comment/pragma:
@@ -357,7 +405,7 @@ public static class Interpreter
             else
             {
                 // Check if bound:
-                var isBound = prevToken.Contains('=') || nextToken.Contains('=');
+                var isBound = TokenToOperator.ContainsKey(prevToken) || TokenToOperator.ContainsKey(nextToken);
 
                 // Check if commented:
                 var isComment = prevToken.Contains('#');

@@ -6,14 +6,21 @@ namespace Tamar.Clausewitz.Constructs;
 
 public class Clause : Construct
 {
-    protected internal Clause(Clause parent, string name = null) : base(parent)
+    protected internal Clause(Clause parent, string name = null, Operators @operator = Operators.Equals) : base(parent)
     {
         if (name != null)
+        {
             Name = name;
+            Operator = @operator;
+        }
         Constructs = new ReadOnlyCollection<Construct>(constructs);
         Bindings = new ReadOnlyCollection<Binding>(bindings);
         Clauses = new ReadOnlyCollection<Clause>(clauses);
         Tokens = new ReadOnlyCollection<Token>(tokens);
+    }
+    public Operators Operator
+    {
+        get; private set;
     }
     /// <summary>
     /// Special constructor for root clauses without a parent
@@ -115,7 +122,7 @@ public class Clause : Construct
         foreach (var member in source.constructs)
             if (member is Binding binding)
             {
-                var newBinding = AddBinding(binding.Name, binding.Value);
+                var newBinding = AddBinding(binding.Name, binding.Operator, binding.Value);
                 newBinding.Comments.AddRange(binding.Comments);
             }
             else if (member is Clause scope)
@@ -176,16 +183,16 @@ public class Clause : Construct
                 return true;
         return false;
     }
-    public Binding AddBinding(string name, string value)
+    public Binding AddBinding(string name, Operators @operator, string value)
     {
-        var binding = new Binding(this, name, value);
+        var binding = new Binding(this, name, @operator, value);
         bindings.Add(binding);
         constructs.Add(binding);
         return binding;
     }
-    public Clause AddClause(string name = null)
+    public Clause AddClause(string name = null, Operators @operator = Operators.Equals)
     {
-        var scope = new Clause(this, name);
+        var scope = new Clause(this, name, @operator);
         clauses.Add(scope);
         constructs.Add(scope);
         return scope;
